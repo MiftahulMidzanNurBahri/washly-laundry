@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard — Washly</title>
+  <meta name="description" content="Pusat kendali operasional outlet Washly Laundry. Pantau antrean penimbangan, proses pencucian, dan status pesanan.">
+
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/admin.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+
+  <div class="admin-layout">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="admin-sidebar" id="admin-sidebar">
+      <div class="admin-sidebar-header">
+        <a href="dashboard.html" class="brand-logo" style="color: #FFFFFF;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <rect x="3" y="2" width="18" height="20" rx="3"/><circle cx="12" cy="13" r="5"/><circle cx="12" cy="13" r="2"/><circle cx="7" cy="6" r="1"/>
+          </svg>
+          <span>Washly</span>
+        </a>
+        <span class="badge badge-role" style="font-size:10px; background:rgba(255,255,255,0.15); color:#93C5FD; border:none;">ADMIN</span>
+      </div>
+
+      <nav class="admin-sidebar-nav">
+        <a href="dashboard.html" class="admin-nav-item active">
+          <div class="admin-nav-item-left">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            <span>Dashboard</span>
+          </div>
+        </a>
+
+        <a href="orders.html" class="admin-nav-item">
+          <div class="admin-nav-item-left">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            <span>Manajemen Pesanan</span>
+          </div>
+        </a>
+
+        <a href="../customer/dashboard.html" class="admin-nav-item">
+          <div class="admin-nav-item-left">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            <span>Lihat Portal Pelanggan</span>
+          </div>
+        </a>
+      </nav>
+
+      <div class="admin-sidebar-footer">
+        <button type="button" class="btn btn-secondary btn-sm btn-logout" style="width: 100%; justify-content:center; background:rgba(255,255,255,0.08); color:#FFFFFF; border-color:rgba(255,255,255,0.12);">
+          Keluar Sesi Admin
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Shell -->
+    <div class="admin-main">
+      
+      <!-- Top Bar -->
+      <header class="admin-topbar">
+        <div class="flex items-center gap-sm">
+          <button type="button" class="admin-mobile-toggle" style="display:none; background:transparent; border:none; padding:8px; font-size:1.5rem;" aria-label="Toggle menu">☰</button>
+          <div>
+            <h3 style="font-size: var(--font-size-base); margin:0;">Dashboard Operasional Outlet</h3>
+            <span class="text-xs text-muted">Washly Outlet Pusat Jakarta</span>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-md">
+          <div class="user-profile-widget">
+            <div class="user-avatar" style="background:var(--color-electric-blue);">WA</div>
+            <div class="user-info">
+              <span class="user-name">Siti Aminah</span>
+              <span class="user-role-label">Petugas & Penimbang</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Content -->
+      <main class="admin-content">
+        
+        <!-- Metrics 4-grid -->
+        <section class="admin-metrics-grid">
+          <div class="admin-metric-card">
+            <div class="admin-metric-info">
+              <span class="admin-metric-label">Total Pesanan</span>
+              <span class="admin-metric-value" id="metric-total-orders">0</span>
+            </div>
+            <div class="admin-metric-icon" style="background:#F1F5F9; color:#475569;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </div>
+          </div>
+
+          <div class="admin-metric-card">
+            <div class="admin-metric-info">
+              <span class="admin-metric-label">Perlu Ditimbang</span>
+              <span class="admin-metric-value" id="metric-menunggu-count" style="color:var(--color-warning);">0</span>
+            </div>
+            <div class="admin-metric-icon" style="background:var(--color-warning-bg); color:var(--color-warning);">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/></svg>
+            </div>
+          </div>
+
+          <div class="admin-metric-card">
+            <div class="admin-metric-info">
+              <span class="admin-metric-label">Sedang Dicuci</span>
+              <span class="admin-metric-value" id="metric-diproses-count" style="color:var(--color-electric-blue);">0</span>
+            </div>
+            <div class="admin-metric-icon" style="background:var(--color-electric-blue-light); color:var(--color-electric-blue);">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="2" width="18" height="20" rx="3"/><circle cx="12" cy="13" r="5"/><circle cx="12" cy="13" r="2"/></svg>
+            </div>
+          </div>
+
+          <div class="admin-metric-card">
+            <div class="admin-metric-info">
+              <span class="admin-metric-label">Siap Diambil</span>
+              <span class="admin-metric-value" id="metric-siap-count" style="color:#7C3AED;">0</span>
+            </div>
+            <div class="admin-metric-icon" style="background:#EDE9FE; color:#7C3AED;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+          </div>
+        </section>
+
+        <!-- Antrean Penimbangan Pakaian (High Priority Action) -->
+        <section class="card mb-xl">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">Antrean Penyerahan & Penimbangan Pakaian</h3>
+              <p class="card-subtitle">Cucian yang baru diserahkan pelanggan dan membutuhkan input berat riil serta penetapan biaya final</p>
+            </div>
+            <span class="badge badge-status-menunggu">Prioritas Input</span>
+          </div>
+          <div class="card-body" id="weighing-queue-container">
+            <!-- Dynamically populated by js/admin.js -->
+          </div>
+        </section>
+
+        <!-- Recent Orders Table -->
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <h3 class="card-title">Pesanan Masuk Terbaru</h3>
+              <p class="card-subtitle">Semua status aktivitas cucian terkini di outlet</p>
+            </div>
+            <a href="orders.html" class="btn btn-outline-primary btn-sm">Buka Semua Pesanan →</a>
+          </div>
+          <div class="table-container" style="border:none; border-radius:0;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Kode Pesanan</th>
+                  <th>Nama Pelanggan</th>
+                  <th>Layanan</th>
+                  <th>Berat Ditimbang</th>
+                  <th>Total Biaya</th>
+                  <th>Status</th>
+                  <th class="text-right">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="admin-recent-orders-tbody">
+                <!-- Dynamically populated by js/admin.js -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+      </main>
+
+    </div>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="../js/config.js"></script>
+  <script src="../js/mock-data.js"></script>
+  <script src="../js/validators.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/app.js"></script>
+  <script src="../js/navigation.js"></script>
+  <script src="../js/admin.js"></script>
+</body>
+</html>

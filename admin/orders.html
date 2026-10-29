@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manajemen Pesanan — Admin Washly</title>
+  <meta name="description" content="Kelola seluruh pesanan masuk, lakukan penimbangan pakaian, dan perbarui tahapan status pencucian.">
+
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/admin.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+
+  <div class="admin-layout">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="admin-sidebar" id="admin-sidebar">
+      <div class="admin-sidebar-header">
+        <a href="dashboard.html" class="brand-logo" style="color: #FFFFFF;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <rect x="3" y="2" width="18" height="20" rx="3"/><circle cx="12" cy="13" r="5"/><circle cx="12" cy="13" r="2"/><circle cx="7" cy="6" r="1"/>
+          </svg>
+          <span>Washly</span>
+        </a>
+        <span class="badge badge-role" style="font-size:10px; background:rgba(255,255,255,0.15); color:#93C5FD; border:none;">ADMIN</span>
+      </div>
+
+      <nav class="admin-sidebar-nav">
+        <a href="dashboard.html" class="admin-nav-item">
+          <div class="admin-nav-item-left">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            <span>Dashboard</span>
+          </div>
+        </a>
+
+        <a href="orders.html" class="admin-nav-item active">
+          <div class="admin-nav-item-left">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            <span>Manajemen Pesanan</span>
+          </div>
+        </a>
+
+        <a href="../customer/dashboard.html" class="admin-nav-item">
+          <div class="admin-nav-item-left">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            <span>Lihat Portal Pelanggan</span>
+          </div>
+        </a>
+      </nav>
+
+      <div class="admin-sidebar-footer">
+        <button type="button" class="btn btn-secondary btn-sm btn-logout" style="width: 100%; justify-content:center; background:rgba(255,255,255,0.08); color:#FFFFFF; border-color:rgba(255,255,255,0.12);">
+          Keluar Sesi Admin
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Shell -->
+    <div class="admin-main">
+      
+      <!-- Top Bar -->
+      <header class="admin-topbar">
+        <div class="flex items-center gap-sm">
+          <button type="button" class="admin-mobile-toggle" style="display:none; background:transparent; border:none; padding:8px; font-size:1.5rem;" aria-label="Toggle menu">☰</button>
+          <div>
+            <h3 style="font-size: var(--font-size-base); margin:0;">Daftar Seluruh Pesanan</h3>
+            <span class="text-xs text-muted">Filter, timbang berat, dan perbarui proses laundry</span>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-md">
+          <div class="user-profile-widget">
+            <div class="user-avatar" style="background:var(--color-electric-blue);">WA</div>
+            <div class="user-info">
+              <span class="user-name">Siti Aminah</span>
+              <span class="user-role-label">Petugas & Penimbang</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Content Area -->
+      <main class="admin-content">
+        
+        <!-- Filter Card -->
+        <div class="card mb-lg" style="padding: var(--space-md);">
+          <div class="flex items-center justify-between flex-wrap gap-md">
+            
+            <!-- Status Tabs -->
+            <div class="flex items-center gap-xs flex-wrap">
+              <button type="button" class="btn btn-secondary btn-sm admin-filter-tab active" data-status="Semua">Semua Status</button>
+              <button type="button" class="btn btn-secondary btn-sm admin-filter-tab" data-status="Menunggu Penyerahan">Menunggu Penyerahan</button>
+              <button type="button" class="btn btn-secondary btn-sm admin-filter-tab" data-status="Diproses">Diproses</button>
+              <button type="button" class="btn btn-secondary btn-sm admin-filter-tab" data-status="Siap Diambil">Siap Diambil</button>
+              <button type="button" class="btn btn-secondary btn-sm admin-filter-tab" data-status="Diambil">Diambil</button>
+            </div>
+
+            <!-- Search and Dropdown Filter -->
+            <div class="flex items-center gap-sm flex-wrap">
+              <select id="admin-service-filter" class="form-select" style="width: auto; padding: 0.4rem 0.75rem; font-size: var(--font-size-xs);">
+                <option value="Semua">Semua Layanan</option>
+                <option value="cuci-komplit">Cuci Komplit</option>
+                <option value="cuci-kering">Cuci Kering Lipat</option>
+                <option value="setrika">Setrika Saja</option>
+                <option value="express">Express Wash</option>
+                <option value="bedcover">Bed Cover & Selimut</option>
+                <option value="sepatu-tas">Sepatu & Tas</option>
+              </select>
+
+              <input 
+                type="text" 
+                id="admin-order-search" 
+                class="form-control" 
+                placeholder="Cari ID / Pelanggan / HP..." 
+                style="padding: 0.4rem 0.75rem; width: 220px;"
+              >
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Orders Table Card -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Daftar Pesanan Laundry</h3>
+            <span class="text-xs font-semibold text-secondary" id="admin-order-count">0 Pesanan</span>
+          </div>
+
+          <div class="table-container" style="border:none; border-radius:0;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Kode Pesanan</th>
+                  <th>Pelanggan</th>
+                  <th>Layanan</th>
+                  <th>Tanggal Masuk</th>
+                  <th>Berat Riil</th>
+                  <th>Total Biaya</th>
+                  <th>Status</th>
+                  <th class="text-right">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="admin-orders-tbody">
+                <!-- Dynamically populated by js/admin.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </main>
+
+    </div>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="../js/config.js"></script>
+  <script src="../js/mock-data.js"></script>
+  <script src="../js/validators.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/app.js"></script>
+  <script src="../js/navigation.js"></script>
+  <script src="../js/admin.js"></script>
+</body>
+</html>
