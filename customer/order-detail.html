@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detail & Pelacakan Pesanan — Washly</title>
+  <meta name="description" content="Lacak kemajuan tahapan pencucian pakaian Anda secara langsung di Washly.">
+
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/customer.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+
+  <!-- Navigation Header -->
+  <header class="app-header">
+    <div class="container header-container">
+      <a href="../index.html" class="brand-logo">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <rect x="3" y="2" width="18" height="20" rx="3"/><circle cx="12" cy="13" r="5"/><circle cx="12" cy="13" r="2"/><circle cx="7" cy="6" r="1"/>
+        </svg>
+        <span>Washly</span>
+      </a>
+
+      <nav class="nav-menu">
+        <a href="dashboard.html" class="nav-link">Dashboard</a>
+        <a href="order.html" class="nav-link">Buat Pesanan Baru</a>
+        <a href="history.html" class="nav-link">Riwayat Pesanan</a>
+        <a href="profile.html" class="nav-link">Profil Saya</a>
+      </nav>
+
+      <div class="flex items-center gap-md">
+        <div class="user-profile-widget">
+          <div class="user-avatar">BS</div>
+          <div class="user-info">
+            <span class="user-name">Budi Santoso</span>
+            <span class="user-role-label">Pelanggan</span>
+          </div>
+        </div>
+        <button type="button" class="btn btn-secondary btn-sm btn-logout" title="Keluar">Keluar</button>
+        <button type="button" class="mobile-nav-toggle" aria-label="Toggle menu">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="container" style="padding-top: var(--space-xl); padding-bottom: var(--space-3xl);" id="order-detail-container">
+    
+    <!-- Top Action Bar -->
+    <div class="flex items-center justify-between mb-lg flex-wrap gap-sm">
+      <div>
+        <a href="history.html" class="text-xs text-link font-semibold mb-xs" style="display:inline-block;">← Kembali ke Riwayat Pesanan</a>
+        <div class="flex items-center gap-sm flex-wrap">
+          <h2 id="detail-order-code">Memuat...</h2>
+          <div id="detail-status-badge"></div>
+        </div>
+        <p class="text-xs text-muted mt-2xs">
+          Waktu Pemesanan: <span id="detail-order-date">-</span>
+        </p>
+      </div>
+
+      <div class="flex items-center gap-xs">
+        <button type="button" class="btn btn-secondary btn-sm" id="btn-copy-code">
+          📋 Salin Kode
+        </button>
+        <button type="button" class="btn btn-secondary btn-sm" id="btn-print-order">
+          🖨️ Cetak Nota
+        </button>
+      </div>
+    </div>
+
+    <!-- Stepper Progress Card -->
+    <div class="card mb-xl">
+      <div class="card-header">
+        <h3 class="card-title">Tahapan Status Cucian</h3>
+      </div>
+      <div class="card-body">
+        <div class="stepper" id="detail-stepper">
+          <!-- Dynamically populated by js/customer.js -->
+        </div>
+      </div>
+    </div>
+
+    <!-- 2 Column Details Layout -->
+    <div class="order-layout">
+      
+      <!-- Left Column: Order Information & Activity Timeline -->
+      <div>
+        <!-- Order Info Card -->
+        <div class="card mb-lg">
+          <div class="card-header">
+            <h3 class="card-title">Informasi Pesanan</h3>
+          </div>
+          <div class="card-body">
+            <div class="grid grid-cols-2 gap-md">
+              <div>
+                <span class="text-xs text-muted block">Paket Layanan:</span>
+                <strong id="detail-service-name" style="font-size:var(--font-size-sm);">-</strong>
+              </div>
+              <div>
+                <span class="text-xs text-muted block">Nama Pelanggan:</span>
+                <strong id="detail-customer-name" style="font-size:var(--font-size-sm);">-</strong>
+              </div>
+              <div>
+                <span class="text-xs text-muted block">Nomor WhatsApp:</span>
+                <span id="detail-customer-phone" class="text-sm font-medium">-</span>
+              </div>
+              <div>
+                <span class="text-xs text-muted block">Metode Penyerahan:</span>
+                <span id="detail-handover-method" class="text-sm font-medium">-</span>
+              </div>
+            </div>
+
+            <div class="mt-md pt-sm" style="border-top:1px solid var(--color-border-light);">
+              <span class="text-xs text-muted block mb-2xs">Catatan Khusus Pelanggan:</span>
+              <p id="detail-order-notes" class="text-sm text-secondary" style="font-style: italic;">
+                -
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Activity Log Card -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Riwayat Aktivitas & Catatan</h3>
+          </div>
+          <div class="card-body">
+            <div class="timeline" id="detail-timeline-list">
+              <!-- Dynamically populated by js/customer.js -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Weight, Billing & Outlet Instructions -->
+      <div>
+        <!-- Cost & Weight Card -->
+        <div class="card mb-lg">
+          <div class="card-header">
+            <h3 class="card-title">Rincian Berat & Tagihan</h3>
+          </div>
+          <div class="card-body" id="detail-weight-cost-box">
+            <!-- Dynamically populated by js/customer.js -->
+          </div>
+        </div>
+
+        <!-- Outlet Info Card -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Lokasi & Pengambilan</h3>
+          </div>
+          <div class="card-body text-xs text-secondary">
+            <strong style="color:var(--color-primary-navy); display:block; margin-bottom:4px;">Outlet Utama Washly</strong>
+            <p>Jl. Kemang Raya No. 14, Mampang Prapatan, Jakarta Selatan</p>
+            <p class="mt-xs">Jam Operasional: <strong>07:00 – 21:00 WIB</strong></p>
+            <div class="order-notice mt-sm" style="background:#F1F5F9; border-color:#E2E8F0; color:#475569;">
+              Tunjukkan kode pesanan ini kepada kasir saat mengambil pakaian di outlet.
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Scripts -->
+  <script src="../js/config.js"></script>
+  <script src="../js/mock-data.js"></script>
+  <script src="../js/validators.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/app.js"></script>
+  <script src="../js/navigation.js"></script>
+  <script src="../js/customer.js"></script>
+</body>
+</html>
