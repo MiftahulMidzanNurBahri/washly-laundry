@@ -1,0 +1,196 @@
+/* ==========================================================================
+   Washly - Global Tokens & Layout
+   Theme: SOFT LUXURY — NAVY & ELECTRIC BLUE
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  /* Brand Palette */
+  --color-primary-navy: #0B1F3A;
+  --color-navy-dark: #071324;
+  --color-navy-light: #163259;
+  --color-navy-surface: #0f2544;
+
+  --color-electric-blue: #1769FF;
+  --color-electric-blue-hover: #0F58DE;
+  --color-electric-blue-light: #EBF2FF;
+  --color-electric-blue-subtle: #F0F5FF;
+
+  /* Neutrals & Surfaces */
+  --color-background: #F5F7FB;
+  --color-surface: #FFFFFF;
+  --color-surface-hover: #F8FAFC;
+  --color-surface-elevated: #FFFFFF;
+
+  /* Typography Colors */
+  --color-text-primary: #172B4D;
+  --color-text-secondary: #64748B;
+  --color-text-muted: #94A3B8;
+  --color-text-inverse: #FFFFFF;
+  --color-text-link: #1769FF;
+
+  /* Borders & Dividers */
+  --color-border: #E2E8F0;
+  --color-border-light: #F1F5F9;
+  --color-border-focus: #1769FF;
+
+  /* Status Colors */
+  --color-success: #15803D;
+  --color-success-bg: #DCFCE7;
+  --color-success-border: #86EFAC;
+
+  --color-warning: #B45309;
+  --color-warning-bg: #FEF3C7;
+  --color-warning-border: #FCD34D;
+
+  --color-error: #B91C1C;
+  --color-error-bg: #FEE2E2;
+  --color-error-border: #FCA5A5;
+
+  --color-info: #0284C7;
+  --color-info-bg: #E0F2FE;
+  --color-info-border: #7DD3FC;
+
+  /* Spacing Scale (8pt system) */
+  --space-2xs: 0.25rem;  /* 4px */
+  --space-xs: 0.5rem;    /* 8px */
+  --space-sm: 0.75rem;   /* 12px */
+  --space-md: 1rem;      /* 16px */
+  --space-lg: 1.5rem;    /* 24px */
+  --space-xl: 2rem;      /* 32px */
+  --space-2xl: 3rem;     /* 48px */
+  --space-3xl: 4rem;     /* 64px */
+
+  /* Typography Scale */
+  --font-family-base: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-size-xs: 0.75rem;    /* 12px */
+  --font-size-sm: 0.875rem;   /* 14px */
+  --font-size-base: 1rem;     /* 16px */
+  --font-size-lg: 1.125rem;   /* 18px */
+  --font-size-xl: 1.25rem;    /* 20px */
+  --font-size-2xl: 1.5rem;    /* 24px */
+  --font-size-3xl: 1.875rem;  /* 30px */
+  --font-size-4xl: 2.25rem;   /* 36px */
+
+  /* Border Radii */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-full: 9999px;
+
+  /* Subtle Soft Luxury Shadows */
+  --shadow-xs: 0 1px 2px rgba(11, 31, 58, 0.04);
+  --shadow-sm: 0 2px 4px rgba(11, 31, 58, 0.05);
+  --shadow-md: 0 4px 12px rgba(11, 31, 58, 0.06), 0 1px 3px rgba(11, 31, 58, 0.04);
+  --shadow-lg: 0 10px 25px -5px rgba(11, 31, 58, 0.08), 0 8px 10px -6px rgba(11, 31, 58, 0.04);
+  --shadow-xl: 0 20px 35px -10px rgba(11, 31, 58, 0.12);
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+  --transition-slow: 350ms ease;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Base typography helpers */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--color-primary-navy);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+h1 { font-size: var(--font-size-3xl); }
+h2 { font-size: var(--font-size-2xl); }
+h3 { font-size: var(--font-size-xl); }
+h4 { font-size: var(--font-size-lg); }
+p { color: var(--color-text-secondary); line-height: 1.6; }
+
+/* Layout Containers */
+.container {
+  width: 100%;
+  max-width: 1240px;
+  margin-inline: auto;
+  padding-inline: var(--space-lg);
+}
+
+.container-narrow {
+  width: 100%;
+  max-width: 900px;
+  margin-inline: auto;
+  padding-inline: var(--space-lg);
+}
+
+.container-full {
+  width: 100%;
+  padding-inline: var(--space-lg);
+}
+
+/* Flex utilities */
+.flex { display: flex; }
+.flex-col { display: flex; flex-direction: column; }
+.flex-wrap { flex-wrap: wrap; }
+.items-center { align-items: center; }
+.items-start { align-items: flex-start; }
+.justify-between { justify-content: space-between; }
+.justify-center { justify-content: center; }
+.justify-end { justify-content: flex-end; }
+.gap-xs { gap: var(--space-xs); }
+.gap-sm { gap: var(--space-sm); }
+.gap-md { gap: var(--space-md); }
+.gap-lg { gap: var(--space-lg); }
+.gap-xl { gap: var(--space-xl); }
+
+/* Grid utilities */
+.grid { display: grid; }
+.grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+/* Spacing helpers */
+.mt-xs { margin-top: var(--space-xs); }
+.mt-sm { margin-top: var(--space-sm); }
+.mt-md { margin-top: var(--space-md); }
+.mt-lg { margin-top: var(--space-lg); }
+.mt-xl { margin-top: var(--space-xl); }
+.mb-xs { margin-bottom: var(--space-xs); }
+.mb-sm { margin-bottom: var(--space-sm); }
+.mb-md { margin-bottom: var(--space-md); }
+.mb-lg { margin-bottom: var(--space-lg); }
+.mb-xl { margin-bottom: var(--space-xl); }
+
+/* Text helpers */
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.text-sm { font-size: var(--font-size-sm); }
+.text-xs { font-size: var(--font-size-xs); }
+.text-muted { color: var(--color-text-muted); }
+.text-secondary { color: var(--color-text-secondary); }
+.font-medium { font-weight: 500; }
+.font-semibold { font-weight: 600; }
+.font-bold { font-weight: 700; }
+
+/* Accessibility helper */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}

@@ -1,0 +1,185 @@
+/* ==========================================================================
+   Washly - Responsive Breakpoints & Mobile Optimization
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Laptops & Tablets Landscape (<= 1024px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 1024px) {
+  .admin-metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .order-layout,
+  .admin-processing-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .order-summary-card {
+    position: static;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Tablets Portrait & Mobile (< 768px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  :root {
+    --space-lg: 1rem;
+    --space-xl: 1.5rem;
+    --font-size-3xl: 1.5rem;
+    --font-size-4xl: 1.875rem;
+  }
+
+  /* Customer Navigation Mobile */
+  .mobile-nav-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+  }
+
+  .nav-menu {
+    display: none;
+    position: absolute;
+    top: 70px;
+    left: 0;
+    right: 0;
+    background-color: #FFFFFF;
+    flex-direction: column;
+    padding: var(--space-md);
+    border-bottom: 1px solid var(--color-border);
+    box-shadow: var(--shadow-lg);
+    gap: var(--space-xs);
+  }
+
+  .nav-menu.is-open {
+    display: flex;
+  }
+
+  .nav-link {
+    width: 100%;
+    padding: 0.75rem 1rem;
+  }
+
+  /* Admin Sidebar Mobile Drawer */
+  .admin-layout {
+    position: relative;
+  }
+
+  .admin-sidebar {
+    position: fixed;
+    top: 37px;
+    bottom: 0;
+    left: 0;
+    width: 280px;
+    transform: translateX(-100%);
+    box-shadow: var(--shadow-xl);
+  }
+
+  .admin-sidebar.is-open {
+    transform: translateX(0);
+  }
+
+  .admin-topbar {
+    padding: 0 var(--space-md);
+  }
+
+  .admin-content {
+    padding: var(--space-md);
+  }
+
+  .admin-mobile-toggle {
+    display: flex !important;
+  }
+
+  /* Stepper mobile adaptability */
+  .stepper {
+    flex-direction: column;
+    gap: var(--space-md);
+    align-items: flex-start;
+  }
+
+  .step-item {
+    flex-direction: row;
+    gap: var(--space-md);
+    text-align: left;
+    width: 100%;
+  }
+
+  .step-item:not(:last-child)::after {
+    display: none;
+  }
+
+  /* Stats cards */
+  .stats-grid,
+  .admin-metrics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .welcome-hero {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-md);
+  }
+
+  /* Demo banner mobile wrapping */
+  .demo-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    font-size: 11px;
+  }
+
+  .app-header {
+    top: 60px; /* adjusted for taller wrapped banner */
+  }
+
+  .admin-topbar {
+    top: 60px;
+  }
+
+  .admin-sidebar {
+    top: 60px;
+  }
+
+  /* Data Table Card Fallback on tiny screens */
+  .table-responsive-card td {
+    display: block;
+    text-align: right;
+    padding-left: 50%;
+    position: relative;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Small Mobile Devices (< 480px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 480px) {
+  .service-selection-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-xs);
+  }
+
+  .btn {
+    width: 100%;
+  }
+
+  .btn-sm,
+  .btn-icon {
+    width: auto;
+  }
+
+  .toast {
+    min-width: 90vw;
+  }
+}

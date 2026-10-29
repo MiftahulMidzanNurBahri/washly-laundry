@@ -1,0 +1,143 @@
+/* ==========================================================================
+   Washly - Auth Styles (Login & Register)
+   ========================================================================== */
+
+.auth-wrapper {
+  min-height: calc(100vh - 40px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xl) var(--space-md);
+  background-color: var(--color-background);
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 480px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  padding: var(--space-xl);
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: var(--space-xl);
+}
+
+.auth-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  color: var(--color-primary-navy);
+  font-size: var(--font-size-2xl);
+  font-weight: 800;
+  text-decoration: none;
+  margin-bottom: var(--space-sm);
+}
+
+.auth-logo svg {
+  color: var(--color-electric-blue);
+}
+
+.auth-title {
+  font-size: var(--font-size-xl);
+  color: var(--color-primary-navy);
+  font-weight: 700;
+  margin-bottom: var(--space-2xs);
+}
+
+.auth-desc {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.auth-role-tabs {
+  display: flex;
+  background-color: #F1F5F9;
+  padding: 4px;
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-lg);
+  border: 1px solid var(--color-border);
+}
+
+.auth-role-tab {
+  flex: 1;
+  text-align: center;
+  padding: 8px 12px;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.auth-role-tab.active {
+  background-color: #FFFFFF;
+  color: var(--color-primary-navy);
+  box-shadow: var(--shadow-xs);
+}
+
+.auth-demo-accounts {
+  background-color: var(--color-electric-blue-subtle);
+  border: 1px dashed #CBD5E1;
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+
+.auth-demo-title {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-electric-blue);
+  margin-bottom: var(--space-xs);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.auth-demo-buttons {
+  display: flex;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+}
+
+.auth-demo-pill {
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  background-color: #FFFFFF;
+  border: 1px solid var(--color-border);
+  color: var(--color-primary-navy);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.auth-demo-pill:hover {
+  background-color: var(--color-electric-blue-light);
+  border-color: var(--color-electric-blue);
+  color: var(--color-electric-blue);
+}
+
+.auth-footer {
+  margin-top: var(--space-lg);
+  text-align: center;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.auth-footer a {
+  color: var(--color-electric-blue);
+  font-weight: 600;
+}
+
+.auth-footer a:hover {
+  text-decoration: underline;
+}
