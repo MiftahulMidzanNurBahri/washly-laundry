@@ -280,7 +280,10 @@ function renderAdminOrderDetailView(order) {
     const elTotal = document.getElementById('admin-calc-total');
 
     if (elSubtotal) elSubtotal.textContent = window.WashlyApp.formatRupiah(subtotal);
-    if (elTotal) elTotal.textContent = enteredWeight > 0 ? window.WashlyApp.formatRupiah(total) : 'Menunggu Berat';
+    if (elTotal) {
+      elTotal.textContent = enteredWeight > 0 ? window.WashlyApp.formatRupiah(total) : 'Menunggu Berat';
+      if (enteredWeight > 0) window.WashlyApp.highlightUpdate(elTotal);
+    }
   };
 
   if (weightInput) {
