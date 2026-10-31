@@ -107,9 +107,9 @@ function initDemoBanner() {
       <span>Aktif sebagai: <strong>${userName}</strong> (${roleName})</span>
     </div>
     <div class="demo-actions">
-      <button type="button" class="demo-btn" id="btn-switch-customer">👤 Masuk Pelanggan</button>
-      <button type="button" class="demo-btn" id="btn-switch-admin">🛡️ Masuk Admin</button>
-      <button type="button" class="demo-btn" id="btn-reset-demo" title="Kembalikan data pesanan awal">🔄 Reset Data</button>
+      <button type="button" class="demo-btn" id="btn-switch-customer">Masuk Pelanggan</button>
+      <button type="button" class="demo-btn" id="btn-switch-admin">Masuk Admin</button>
+      <button type="button" class="demo-btn" id="btn-reset-demo" title="Kembalikan data pesanan awal">Reset Data</button>
     </div>
   `;
 
