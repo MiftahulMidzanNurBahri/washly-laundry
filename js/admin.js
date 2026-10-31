@@ -94,7 +94,7 @@ function renderWeighingQueue(orders) {
               </div>
             </div>
             <a href="order-detail.html?id=${encodeURIComponent(order.id)}" class="btn btn-primary btn-sm">
-              ${window.WashlyApp.icons.scale} Timbang & Proses
+              Timbang & Proses
             </a>
           </div>
         </div>
@@ -191,7 +191,6 @@ function renderAdminOrdersTable(orders) {
       <tr>
         <td colspan="8" class="text-center" style="padding: var(--space-2xl);">
           <div class="empty-state">
-            <div class="empty-state-icon">${window.WashlyApp.icons.search}</div>
             <div class="empty-state-title">Pesanan Tidak Ditemukan</div>
             <div class="empty-state-text">Tidak ada data pesanan yang cocok dengan kriteria filter saat ini.</div>
           </div>
