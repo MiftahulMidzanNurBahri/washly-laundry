@@ -4,11 +4,83 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+  initPageTransitions();
   initDemoBanner();
   initMobileNavigation();
   highlightActiveNav();
   initLogoutHandlers();
 });
+
+// --------------------------------------------------------------------------
+// Smooth Page Transitions & Navigation Progress Bar
+// --------------------------------------------------------------------------
+function initPageTransitions() {
+  // Ensure progress bar element exists
+  let progressBar = document.getElementById('washly-page-progress');
+  if (!progressBar) {
+    progressBar = document.createElement('div');
+    progressBar.id = 'washly-page-progress';
+    document.body.prepend(progressBar);
+  }
+
+  // Finish entrance animation
+  document.body.classList.add('page-enter');
+  progressBar.style.width = '100%';
+  setTimeout(() => {
+    progressBar.style.opacity = '0';
+    setTimeout(() => {
+      progressBar.style.width = '0%';
+      progressBar.style.opacity = '1';
+    }, 200);
+    document.body.classList.remove('page-enter');
+  }, 260);
+
+  // Handle BFcache (Back/Forward navigation restore)
+  window.addEventListener('pageshow', (event) => {
+    document.body.classList.remove('page-exit');
+    document.body.classList.add('page-enter');
+    setTimeout(() => document.body.classList.remove('page-enter'), 260);
+  });
+
+  // Intercept eligible internal link clicks for smooth transition
+  document.addEventListener('click', (e) => {
+    const link = e.target.closest('a');
+    if (!link) return;
+
+    const href = link.getAttribute('href');
+    if (!href) return;
+
+    // Filter out anchors, protocols, targets, and modifiers
+    if (
+      href.startsWith('#') ||
+      href.startsWith('mailto:') ||
+      href.startsWith('tel:') ||
+      href.startsWith('javascript:') ||
+      link.target === '_blank' ||
+      link.hasAttribute('download') ||
+      e.ctrlKey || e.metaKey || e.shiftKey || e.altKey
+    ) {
+      return;
+    }
+
+    // Check if origin matches or is relative
+    const isRelative = !href.startsWith('http://') && !href.startsWith('https://');
+    const isSameOrigin = href.startsWith(window.location.origin);
+    if (!isRelative && !isSameOrigin) return;
+
+    e.preventDefault();
+
+    // Trigger visual exit transition
+    if (progressBar) {
+      progressBar.style.width = '70%';
+    }
+    document.body.classList.add('page-exit');
+
+    setTimeout(() => {
+      window.location.href = href;
+    }, 130);
+  });
+}
 
 // --------------------------------------------------------------------------
 // Demo Banner & Persona Switcher
@@ -83,27 +155,67 @@ function initMobileNavigation() {
   const customerToggle = document.querySelector('.mobile-nav-toggle');
   const navMenu = document.querySelector('.nav-menu');
   if (customerToggle && navMenu) {
-    customerToggle.addEventListener('click', () => {
+    customerToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
       const isOpen = navMenu.classList.toggle('is-open');
       customerToggle.setAttribute('aria-expanded', isOpen);
     });
-  }
 
-  // Admin sidebar mobile hamburger
-  const adminToggle = document.querySelector('.admin-mobile-toggle');
-  const adminSidebar = document.querySelector('.admin-sidebar');
-  if (adminToggle && adminSidebar) {
-    adminToggle.addEventListener('click', () => {
-      adminSidebar.classList.toggle('is-open');
+    // Close when clicking nav link
+    navMenu.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', () => {
+        navMenu.classList.remove('is-open');
+        customerToggle.setAttribute('aria-expanded', 'false');
+      });
     });
 
     // Close when clicking outside on mobile
     document.addEventListener('click', (e) => {
-      if (adminSidebar.classList.contains('is-open') &&
-          !adminSidebar.contains(e.target) &&
-          !adminToggle.contains(e.target)) {
-        adminSidebar.classList.remove('is-open');
+      if (navMenu.classList.contains('is-open') &&
+          !navMenu.contains(e.target) &&
+          !customerToggle.contains(e.target)) {
+        navMenu.classList.remove('is-open');
+        customerToggle.setAttribute('aria-expanded', 'false');
       }
+    });
+  }
+
+  // Admin sidebar mobile hamburger & backdrop
+  const adminToggle = document.querySelector('.admin-mobile-toggle');
+  const adminSidebar = document.querySelector('.admin-sidebar');
+  if (adminSidebar) {
+    // Inject backdrop overlay if not present
+    let backdrop = document.querySelector('.admin-sidebar-backdrop');
+    if (!backdrop) {
+      backdrop = document.createElement('div');
+      backdrop.className = 'admin-sidebar-backdrop';
+      adminSidebar.parentElement?.appendChild(backdrop);
+    }
+
+    const toggleAdminSidebar = (open) => {
+      const shouldOpen = open !== undefined ? open : !adminSidebar.classList.contains('is-open');
+      adminSidebar.classList.toggle('is-open', shouldOpen);
+      backdrop.classList.toggle('is-open', shouldOpen);
+      if (adminToggle) adminToggle.setAttribute('aria-expanded', shouldOpen);
+    };
+
+    if (adminToggle) {
+      adminToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleAdminSidebar();
+      });
+    }
+
+    backdrop.addEventListener('click', () => {
+      toggleAdminSidebar(false);
+    });
+
+    adminSidebar.querySelectorAll('.admin-nav-item').forEach(item => {
+      item.addEventListener('click', () => {
+        if (window.innerWidth <= 768) {
+          toggleAdminSidebar(false);
+        }
+      });
     });
   }
 }
