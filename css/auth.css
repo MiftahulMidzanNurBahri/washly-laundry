@@ -15,10 +15,11 @@
   width: 100%;
   max-width: 480px;
   background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-card-border);
   border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-xl);
+  box-shadow: 0 20px 45px -10px rgba(11, 31, 58, 0.12), 0 0 0 1px rgba(11, 31, 58, 0.04);
   padding: var(--space-xl);
+  animation: washlyPageEntrance 300ms var(--ease-spring) forwards;
 }
 
 .auth-header {
