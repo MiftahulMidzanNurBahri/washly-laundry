@@ -378,7 +378,10 @@ function updateOrderCalculation() {
   if (elScentPrice) elScentPrice.textContent = scentPrice > 0 ? window.WashlyApp.formatRupiah(scentPrice) : 'Gratis';
   if (elEstWeight) elEstWeight.textContent = `${weight} ${unit}`;
   if (elEstSubtotal) elEstSubtotal.textContent = window.WashlyApp.formatRupiah(subtotalService);
-  if (elEstTotal) elEstTotal.textContent = window.WashlyApp.formatRupiah(totalEstimated);
+  if (elEstTotal) {
+    elEstTotal.textContent = window.WashlyApp.formatRupiah(totalEstimated);
+    window.WashlyApp.highlightUpdate(elEstTotal);
+  }
 }
 
 // --------------------------------------------------------------------------
