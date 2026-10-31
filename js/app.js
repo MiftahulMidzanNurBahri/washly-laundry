@@ -58,6 +58,8 @@ const WashlyApp = (() => {
 
     const toast = document.createElement('div');
     toast.className = `toast toast-${type}`;
+    toast.setAttribute('role', 'alert');
+    toast.setAttribute('aria-live', 'assertive');
 
     let iconSvg = '';
     if (type === 'success') {
@@ -68,24 +70,43 @@ const WashlyApp = (() => {
       iconSvg = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1769FF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`;
     }
 
+    const duration = 3800;
+
     toast.innerHTML = `
-      <div style="display:flex; align-items:center; gap:8px;">
+      <div style="display:flex; align-items:center; gap:10px; z-index:1;">
         ${iconSvg}
-        <span>${WashlyValidators.escapeHtml(message)}</span>
+        <span style="font-weight:500;">${WashlyValidators.escapeHtml(message)}</span>
       </div>
-      <button type="button" style="color:#94A3B8; padding:4px;" onclick="this.parentElement.remove()" aria-label="Tutup notifikasi">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      <button type="button" class="toast-close-btn" style="background:transparent; border:none; color:#94A3B8; padding:4px; cursor:pointer; display:flex; align-items:center; border-radius:4px; z-index:1; transition:color 150ms ease;" aria-label="Tutup notifikasi">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
+      <div class="toast-progress" style="animation-duration: ${duration}ms;"></div>
     `;
 
+    const closeToast = () => {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateX(110%) scale(0.95)';
+      setTimeout(() => {
+        if (toast.parentElement) toast.remove();
+      }, 220);
+    };
+
+    toast.querySelector('.toast-close-btn')?.addEventListener('click', closeToast);
     container.appendChild(toast);
 
+    setTimeout(closeToast, duration);
+  }
+
+  // Visual feedback highlight for live calculation ticker
+  function highlightUpdate(element) {
+    if (!element) return;
+    element.classList.remove('price-flash');
+    // Force reflow
+    void element.offsetWidth;
+    element.classList.add('price-flash');
     setTimeout(() => {
-      toast.style.opacity = '0';
-      toast.style.transform = 'translateY(10px)';
-      toast.style.transition = 'all 200ms ease';
-      setTimeout(() => toast.remove(), 200);
-    }, 4000);
+      element.classList.remove('price-flash');
+    }, 650);
   }
 
   // Modal Handlers
@@ -125,6 +146,7 @@ const WashlyApp = (() => {
     formatDateIndo,
     renderStatusBadge,
     showToast,
+    highlightUpdate,
     openModal,
     closeModal,
     icons
