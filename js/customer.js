@@ -98,9 +98,6 @@ function renderOngoingOrderCard(order) {
   if (!order) {
     container.innerHTML = `
       <div class="empty-state" style="padding: var(--space-xl) var(--space-md); border: 1px dashed var(--color-border); border-radius: var(--radius-lg); background: #FFFFFF;">
-        <div class="empty-state-icon">
-          ${window.WashlyApp.icons.washer}
-        </div>
         <div class="empty-state-title">Tidak Ada Pesanan Berjalan</div>
         <div class="empty-state-text">Semua pakaian Anda telah selesai atau belum ada pesanan baru.</div>
         <a href="order.html" class="btn btn-primary btn-sm">Buat Pesanan Laundry Sekarang</a>
@@ -130,19 +127,19 @@ function renderOngoingOrderCard(order) {
         <!-- Stepper Indicator -->
         <div class="stepper mb-md">
           <div class="step-item ${stepIndex >= 1 ? (stepIndex > 1 ? 'completed' : 'active') : ''}">
-            <div class="step-circle">${stepIndex > 1 ? '✓' : '1'}</div>
+            <div class="step-circle">1</div>
             <div class="step-title">Menunggu Penyerahan</div>
           </div>
           <div class="step-item ${stepIndex >= 2 ? (stepIndex > 2 ? 'completed' : 'active') : ''}">
-            <div class="step-circle">${stepIndex > 2 ? '✓' : '2'}</div>
+            <div class="step-circle">2</div>
             <div class="step-title">Diproses</div>
           </div>
           <div class="step-item ${stepIndex >= 3 ? (stepIndex > 3 ? 'completed' : 'active') : ''}">
-            <div class="step-circle">${stepIndex > 3 ? '✓' : '3'}</div>
+            <div class="step-circle">3</div>
             <div class="step-title">Siap Diambil</div>
           </div>
           <div class="step-item ${stepIndex >= 4 ? 'completed' : ''}">
-            <div class="step-circle">${stepIndex >= 4 ? '✓' : '4'}</div>
+            <div class="step-circle">4</div>
             <div class="step-title">Diambil</div>
           </div>
         </div>
@@ -299,15 +296,11 @@ function renderServicesSelection() {
   const services = window.WASHLY_CONFIG.SERVICES;
   container.innerHTML = services.map((svc, idx) => `
     <div class="service-card ${idx === 0 ? 'selected' : ''}" data-service-id="${svc.id}" data-price="${svc.price}" data-unit="${svc.unit}">
-      <div class="service-icon">
-        ${window.WashlyApp.icons[svc.icon] || window.WashlyApp.icons.washer}
-      </div>
       <div class="service-name">${WashlyValidators.escapeHtml(svc.name)}</div>
       <div class="service-price">${window.WashlyApp.formatRupiah(svc.price)} / ${svc.unit}</div>
       <div class="service-desc">${WashlyValidators.escapeHtml(svc.description)}</div>
       <div class="service-duration">
-        ${window.WashlyApp.icons.clock}
-        <span>Estimasi pengerjaan: ${svc.duration}</span>
+        <span>Estimasi: ${svc.duration}</span>
       </div>
     </div>
   `).join('');
@@ -404,9 +397,6 @@ async function initOrderDetailPage() {
     if (mainContainer) {
       mainContainer.innerHTML = `
         <div class="empty-state">
-          <div class="empty-state-icon" style="background:#FEE2E2; color:#B91C1C;">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          </div>
           <div class="empty-state-title">Pesanan Tidak Ditemukan</div>
           <div class="empty-state-text">Pesanan dengan kode <strong>${WashlyValidators.escapeHtml(orderId)}</strong> tidak terdaftar dalam sistem Washly.</div>
           <a href="dashboard.html" class="btn btn-secondary">Kembali ke Dashboard</a>
@@ -434,22 +424,22 @@ function renderOrderDetailView(order) {
   if (stepperEl) {
     stepperEl.innerHTML = `
       <div class="step-item ${currentStep >= 1 ? (currentStep > 1 ? 'completed' : 'active') : ''}">
-        <div class="step-circle">${currentStep > 1 ? '✓' : '1'}</div>
+        <div class="step-circle">1</div>
         <div class="step-title">Menunggu Penyerahan</div>
         <div class="step-time">${findTimelineTime(order.timeline, 'Menunggu Penyerahan')}</div>
       </div>
       <div class="step-item ${currentStep >= 2 ? (currentStep > 2 ? 'completed' : 'active') : ''}">
-        <div class="step-circle">${currentStep > 2 ? '✓' : '2'}</div>
+        <div class="step-circle">2</div>
         <div class="step-title">Diproses</div>
         <div class="step-time">${findTimelineTime(order.timeline, 'Diproses')}</div>
       </div>
       <div class="step-item ${currentStep >= 3 ? (currentStep > 3 ? 'completed' : 'active') : ''}">
-        <div class="step-circle">${currentStep > 3 ? '✓' : '3'}</div>
+        <div class="step-circle">3</div>
         <div class="step-title">Siap Diambil</div>
         <div class="step-time">${findTimelineTime(order.timeline, 'Siap Diambil')}</div>
       </div>
       <div class="step-item ${currentStep >= 4 ? 'completed' : ''}">
-        <div class="step-circle">${currentStep >= 4 ? '✓' : '4'}</div>
+        <div class="step-circle">4</div>
         <div class="step-title">Diambil</div>
         <div class="step-time">${findTimelineTime(order.timeline, 'Diambil')}</div>
       </div>
@@ -593,7 +583,6 @@ async function initCustomerHistoryPage() {
         <tr>
           <td colspan="7" class="text-center" style="padding: var(--space-2xl);">
             <div class="empty-state">
-              <div class="empty-state-icon">${window.WashlyApp.icons.washer}</div>
               <div class="empty-state-title">Tidak ada pesanan ditemukan</div>
               <div class="empty-state-text">Coba ubah kata kunci pencarian atau filter status pesanan.</div>
             </div>
