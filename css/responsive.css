@@ -50,14 +50,19 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
-    cursor: pointer;
+    font-size: var(--font-size-xs);
+    font-weight: 700;
+    padding: 0.35rem 0.75rem;
+    border: 1px solid var(--color-border);
     border-radius: var(--radius-sm);
-    transition: transform var(--transition-fast), color var(--transition-fast);
+    background: #FFFFFF;
+    color: var(--color-primary-navy);
+    cursor: pointer;
+    transition: transform var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
   }
 
   .mobile-nav-toggle:active {
-    transform: scale(0.9);
+    transform: scale(0.95);
   }
 
   .nav-menu {
@@ -125,13 +130,20 @@
 
   .admin-mobile-toggle {
     display: flex !important;
-    cursor: pointer;
     align-items: center;
     justify-content: center;
+    font-size: var(--font-size-xs);
+    font-weight: 700;
+    padding: 0.35rem 0.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: #FFFFFF;
+    color: var(--color-primary-navy);
+    cursor: pointer;
   }
 
   .admin-mobile-toggle:active {
-    transform: scale(0.9);
+    transform: scale(0.95);
   }
 
   /* Stepper mobile adaptability */
