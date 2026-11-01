@@ -49,7 +49,7 @@
   justify-content: space-between;
   padding: 0.625rem 0.875rem;
   border-radius: var(--radius-md);
-  color: #94A3B8;
+  color: #EEEAF8;
   font-size: var(--font-size-sm);
   font-weight: 600;
   transition: all var(--transition-fast);
@@ -63,7 +63,7 @@
 .admin-nav-item.active {
   color: #FFFFFF;
   background-color: var(--color-electric-blue);
-  box-shadow: 0 2px 8px rgba(23, 105, 255, 0.35);
+  box-shadow: 0 2px 8px var(--color-electric-blue-glow);
 }
 
 .admin-nav-item-left {
@@ -89,7 +89,7 @@
   background-color: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  border-bottom: 1px solid rgba(11, 31, 58, 0.08);
+  border-bottom: 1px solid rgba(57, 52, 94, 0.08);
   padding: 0 var(--space-xl);
   display: flex;
   align-items: center;
@@ -116,7 +116,7 @@
 }
 
 .admin-metric-card {
-  background-color: #FFFFFF;
+  background-color: var(--color-surface);
   border: 1px solid var(--color-card-border);
   border-radius: var(--radius-lg);
   padding: var(--space-lg);
@@ -130,7 +130,7 @@
 .admin-metric-card:hover {
   transform: translateY(-3px);
   box-shadow: var(--shadow-md);
-  border-color: rgba(23, 105, 255, 0.3);
+  border-color: var(--color-electric-blue);
 }
 
 .admin-metric-info {
@@ -173,8 +173,8 @@
 }
 
 .weight-input-box {
-  background-color: #F8FAFC;
-  border: 2px dashed #CBD5E1;
+  background-color: var(--color-surface-hover);
+  border: 2px dashed var(--color-border);
   border-radius: var(--radius-lg);
   padding: var(--space-lg);
   margin-bottom: var(--space-lg);
@@ -197,7 +197,7 @@
   color: var(--color-primary-navy);
   width: 140px;
   padding: 4px 8px;
-  background-color: #FFFFFF;
+  background-color: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
 }
@@ -209,7 +209,7 @@
 }
 
 .cost-calculation-panel {
-  background-color: #FFFFFF;
+  background-color: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   padding: var(--space-md);
@@ -248,20 +248,20 @@
   border-radius: var(--radius-md);
   cursor: pointer;
   transition: all var(--transition-fast);
-  background-color: #FFFFFF;
+  background-color: var(--color-surface);
   user-select: none;
 }
 
 .status-radio-option:hover {
   background-color: var(--color-surface-hover);
-  border-color: #93C5FD;
+  border-color: var(--color-electric-blue);
   transform: translateX(2px);
 }
 
 .status-radio-option.selected {
   border-color: var(--color-electric-blue);
   background-color: var(--color-electric-blue-subtle);
-  box-shadow: 0 2px 8px rgba(23, 105, 255, 0.12);
+  box-shadow: 0 2px 8px var(--color-electric-blue-glow);
 }
 
 .status-radio-option input[type="radio"] {
@@ -274,14 +274,14 @@
   opacity: 0.5;
   cursor: not-allowed;
   pointer-events: none;
-  background-color: #F8FAFC;
+  background-color: var(--color-surface-hover);
 }
 
 /* Mobile Sidebar Backdrop Overlay */
 .admin-sidebar-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(7, 19, 36, 0.65);
+  background: rgba(23, 21, 38, 0.65);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   z-index: 890;

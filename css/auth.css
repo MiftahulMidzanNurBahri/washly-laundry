@@ -17,7 +17,7 @@
   background-color: var(--color-surface);
   border: 1px solid var(--color-card-border);
   border-radius: var(--radius-xl);
-  box-shadow: 0 20px 45px -10px rgba(11, 31, 58, 0.12), 0 0 0 1px rgba(11, 31, 58, 0.04);
+  box-shadow: 0 20px 45px -10px rgba(57, 52, 94, 0.12), 0 0 0 1px rgba(57, 52, 94, 0.04);
   padding: var(--space-xl);
   animation: washlyPageEntrance 300ms var(--ease-spring) forwards;
 }
@@ -56,7 +56,7 @@
 
 .auth-role-tabs {
   display: flex;
-  background-color: #F1F5F9;
+  background-color: var(--color-surface-hover);
   padding: 4px;
   border-radius: var(--radius-md);
   margin-bottom: var(--space-lg);
@@ -78,14 +78,14 @@
 }
 
 .auth-role-tab.active {
-  background-color: #FFFFFF;
+  background-color: var(--color-surface);
   color: var(--color-primary-navy);
   box-shadow: var(--shadow-xs);
 }
 
 .auth-demo-accounts {
   background-color: var(--color-electric-blue-subtle);
-  border: 1px dashed #CBD5E1;
+  border: 1px dashed var(--color-border);
   border-radius: var(--radius-md);
   padding: var(--space-md);
   margin-bottom: var(--space-lg);
@@ -113,7 +113,7 @@
   font-size: 11px;
   padding: 4px 8px;
   border-radius: var(--radius-sm);
-  background-color: #FFFFFF;
+  background-color: var(--color-surface);
   border: 1px solid var(--color-border);
   color: var(--color-primary-navy);
   font-weight: 600;
