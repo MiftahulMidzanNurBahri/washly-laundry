@@ -183,7 +183,9 @@ function initMobileNavigation() {
   // Admin sidebar mobile hamburger & backdrop
   const adminToggle = document.querySelector('.admin-mobile-toggle');
   const adminSidebar = document.querySelector('.admin-sidebar');
-  if (adminSidebar) {
+  const adminLayout = document.querySelector('.admin-layout');
+  const adminMain = document.querySelector('.admin-main');
+  if (adminSidebar && adminLayout) {
     // Inject backdrop overlay if not present
     let backdrop = document.querySelector('.admin-sidebar-backdrop');
     if (!backdrop) {
@@ -192,12 +194,32 @@ function initMobileNavigation() {
       adminSidebar.parentElement?.appendChild(backdrop);
     }
 
-    const toggleAdminSidebar = (open) => {
-      const shouldOpen = open !== undefined ? open : !adminSidebar.classList.contains('is-open');
-      adminSidebar.classList.toggle('is-open', shouldOpen);
-      backdrop.classList.toggle('is-open', shouldOpen);
-      if (adminToggle) adminToggle.setAttribute('aria-expanded', shouldOpen);
+    const isMobile = () => window.matchMedia('(max-width: 768px)').matches;
+    let mobileViewport = isMobile();
+    const toggleAdminSidebar = (open, restoreFocus = false, focusOnOpen = false) => {
+      const shouldOpen = open !== undefined ? open : !adminLayout.classList.contains('sidebar-open');
+      const wasOpen = adminLayout.classList.contains('sidebar-open');
+      const mobile = isMobile();
+      adminLayout.classList.toggle('sidebar-open', shouldOpen);
+      adminSidebar.classList.toggle('is-open', shouldOpen && mobile);
+      adminSidebar.setAttribute('aria-hidden', String(!shouldOpen));
+      adminSidebar.inert = !shouldOpen;
+      backdrop.classList.toggle('is-open', shouldOpen && mobile);
+      if (adminMain) adminMain.inert = shouldOpen && mobile;
+      document.body.classList.toggle('admin-sidebar-open', shouldOpen && mobile);
+      if (adminToggle) {
+        adminToggle.setAttribute('aria-expanded', String(shouldOpen));
+        adminToggle.setAttribute('aria-label', shouldOpen ? 'Close navigation menu' : 'Open navigation menu');
+      }
+
+      if (shouldOpen && mobile && (!wasOpen || focusOnOpen)) {
+        adminSidebar.querySelector('.admin-nav-item')?.focus();
+      } else if (restoreFocus) {
+        adminToggle?.focus();
+      }
     };
+
+    toggleAdminSidebar(false);
 
     if (adminToggle) {
       adminToggle.addEventListener('click', (e) => {
@@ -207,15 +229,29 @@ function initMobileNavigation() {
     }
 
     backdrop.addEventListener('click', () => {
-      toggleAdminSidebar(false);
+      toggleAdminSidebar(false, true);
     });
 
     adminSidebar.querySelectorAll('.admin-nav-item').forEach(item => {
       item.addEventListener('click', () => {
-        if (window.innerWidth <= 768) {
+        if (isMobile()) {
           toggleAdminSidebar(false);
         }
       });
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && isMobile() && adminLayout.classList.contains('sidebar-open')) {
+        toggleAdminSidebar(false, true);
+      }
+    });
+
+    window.addEventListener('resize', () => {
+      const nextMobileViewport = isMobile();
+      if (nextMobileViewport === mobileViewport) return;
+      mobileViewport = nextMobileViewport;
+      const isOpen = adminLayout.classList.contains('sidebar-open');
+      toggleAdminSidebar(isOpen, false, isOpen && nextMobileViewport);
     });
   }
 }
