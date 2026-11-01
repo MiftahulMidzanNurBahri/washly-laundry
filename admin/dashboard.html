@@ -29,7 +29,7 @@
   <div class="admin-layout">
     
     <!-- Sidebar Navigation -->
-    <aside class="admin-sidebar" id="admin-sidebar">
+    <aside class="admin-sidebar" id="admin-sidebar" aria-hidden="true" inert>
       <div class="admin-sidebar-header">
         <a href="dashboard.html" class="brand-logo" style="color: #FFFFFF;">
           <span>Washly</span>
@@ -70,7 +70,11 @@
       <!-- Top Bar -->
       <header class="admin-topbar">
         <div class="flex items-center gap-sm">
-          <button type="button" class="admin-mobile-toggle" style="display:none; background:transparent; border:none; padding:8px; font-size:14px; font-weight:700;" aria-label="Toggle menu">Menu</button>
+          <button type="button" class="admin-mobile-toggle" aria-label="Open navigation menu" aria-expanded="false" aria-controls="admin-sidebar">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+          </button>
           <div>
             <h3 style="font-size: var(--font-size-base); margin:0;">Dashboard Operasional Outlet</h3>
             <span class="text-xs text-muted">Washly Outlet Pusat Jakarta</span>
