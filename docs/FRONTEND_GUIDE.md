@@ -61,28 +61,29 @@ washly-laundry/
 
 ---
 
-## 3. SISTEM TOKENS DESAIN (PALET NAVY & ELECTRIC BLUE)
+## 3. SISTEM TOKENS DESAIN (PALET LAVENDER WHITE & MIDNIGHT LAVENDER)
 
 Definisi token warna tersentralisasi di `css/global.css`:
 
 ```css
 :root {
   /* Brand Palette */
-  --color-primary-navy: #0B1F3A;
-  --color-navy-dark: #071324;
-  --color-navy-light: #163259;
-  --color-electric-blue: #1769FF;
-  --color-electric-blue-hover: #0F58DE;
-  --color-electric-blue-light: #EBF2FF;
+  --color-primary-navy: #39345E;
+  --color-navy-light: #7569A8;
+  --color-electric-blue: #7569A8;
+  --color-electric-blue-hover: #39345E;
+  --color-electric-blue-light: #EEEAF8;
 
   /* Surfaces & Background */
-  --color-background: #F5F7FB;
+  --color-background: #FAF9FD;
   --color-surface: #FFFFFF;
+  --color-surface-hover: #EEEAF8;
 
   /* Text & Border */
-  --color-text-primary: #172B4D;
-  --color-text-secondary: #64748B;
-  --color-border: #E2E8F0;
+  --color-text-primary: #39345E;
+  --color-text-secondary: #6F6A80;
+  --color-text-muted: #9690A5;
+  --color-border: #EEEAF8;
 
   /* Status Colors */
   --color-success: #15803D; /* Diambil */
@@ -91,6 +92,10 @@ Definisi token warna tersentralisasi di `css/global.css`:
   --color-info: #0284C7;    /* Diproses */
 }
 ```
+
+Dark mode overrides the same tokens with the Midnight Lavender palette and uses
+the existing `data-theme="dark"` attribute. The theme toggle persists through
+`localStorage` using the `washly_theme` key, initialized in each page head before styles load.
 
 ---
 

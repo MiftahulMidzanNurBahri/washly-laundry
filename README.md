@@ -9,7 +9,7 @@ Sistem manajemen dan layanan laundry modern dengan antarmuka pelanggan intuitif,
 Aplikasi ini dibangun khusus memenuhi batasan ketat tanpa framework:
 - **Teknologi yang Digunakan:** HTML5, CSS3, Vanilla JavaScript (ES6+), Inline SVG.
 - **Teknologi Terlarang:** Tanpa React, Vue, Angular, Svelte, Bootstrap, Tailwind CSS, jQuery, Vite, Webpack, atau npm dependencies.
-- **Arah Desain:** *Soft Luxury — Navy & Electric Blue* (#0B1F3A, #1769FF, #F5F7FB, #FFFFFF).
+- **Arah Desain:** *Lavender White & Midnight Lavender* (#FAF9FD, #39345E, #7569A8, #FFFFFF).
 - **Bahasa Antarmuka:** Bahasa Indonesia secara menyeluruh.
 - **Kesiapan Backend:** Dilengkapi adapter API sentral (`js/api.js`) yang siap terhubung dengan backend PHP & database MySQL tim backend.
 
