@@ -4,6 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Buat Pesanan Laundry Baru — Washly</title>
+  <script>
+    (function() {
+      try {
+        var theme = localStorage.getItem('washly_theme');
+        if (theme === 'dark') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      } catch (e) {}
+    })();
+  </script>
   <meta name="description" content="Pilih paket layanan laundry terbaik, aroma parfum eksklusif, dan kirim instruksi pencucian Anda di Washly.">
 
   <link rel="stylesheet" href="../css/reset.css">

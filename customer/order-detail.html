@@ -4,6 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Detail & Pelacakan Pesanan — Washly</title>
+  <script>
+    (function() {
+      try {
+        var theme = localStorage.getItem('washly_theme');
+        if (theme === 'dark') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      } catch (e) {}
+    })();
+  </script>
   <meta name="description" content="Lacak kemajuan tahapan pencucian pakaian Anda secara langsung di Washly.">
 
   <link rel="stylesheet" href="../css/reset.css">
@@ -153,7 +165,7 @@
             <strong style="color:var(--color-primary-navy); display:block; margin-bottom:4px;">Outlet Utama Washly</strong>
             <p>Jl. Kemang Raya No. 14, Mampang Prapatan, Jakarta Selatan</p>
             <p class="mt-xs">Jam Operasional: <strong>07:00 – 21:00 WIB</strong></p>
-            <div class="order-notice mt-sm" style="background:#F1F5F9; border-color:#E2E8F0; color:#475569;">
+            <div class="order-notice mt-sm" style="background:var(--color-surface-hover); border-color:var(--color-border); color:var(--color-text-secondary);">
               Tunjukkan kode pesanan ini kepada kasir saat mengambil pakaian di outlet.
             </div>
           </div>

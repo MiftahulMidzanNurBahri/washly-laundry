@@ -4,6 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard — Washly</title>
+  <script>
+    (function() {
+      try {
+        var theme = localStorage.getItem('washly_theme');
+        if (theme === 'dark') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      } catch (e) {}
+    })();
+  </script>
   <meta name="description" content="Pusat kendali operasional outlet Washly Laundry. Pantau antrean penimbangan, proses pencucian, dan status pesanan.">
 
   <link rel="stylesheet" href="../css/reset.css">
@@ -22,7 +34,7 @@
         <a href="dashboard.html" class="brand-logo" style="color: #FFFFFF;">
           <span>Washly</span>
         </a>
-        <span class="badge badge-role" style="font-size:10px; background:rgba(255,255,255,0.15); color:#93C5FD; border:none;">ADMIN</span>
+        <span class="badge badge-role" style="font-size:10px; background:rgba(255,255,255,0.15); color:#B9ACDA; border:none;">ADMIN</span>
       </div>
 
       <nav class="admin-sidebar-nav">
@@ -105,7 +117,7 @@
           <div class="admin-metric-card">
             <div class="admin-metric-info">
               <span class="admin-metric-label">Siap Diambil</span>
-              <span class="admin-metric-value" id="metric-siap-count" style="color:#7C3AED;">0</span>
+              <span class="admin-metric-value" id="metric-siap-count" style="color:var(--color-electric-blue);">0</span>
             </div>
           </div>
         </section>

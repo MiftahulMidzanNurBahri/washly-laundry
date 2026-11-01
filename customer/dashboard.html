@@ -4,6 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard Pelanggan — Washly</title>
+  <script>
+    (function() {
+      try {
+        var theme = localStorage.getItem('washly_theme');
+        if (theme === 'dark') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      } catch (e) {}
+    })();
+  </script>
   <meta name="description" content="Pantau pesanan laundry berjalan, estimasi selesai, dan riwayat pesanan Anda di Washly.">
 
   <link rel="stylesheet" href="../css/reset.css">

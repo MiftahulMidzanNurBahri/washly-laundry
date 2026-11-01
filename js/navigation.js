@@ -4,6 +4,7 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+  initThemeSwitcher();
   initPageTransitions();
   initDemoBanner();
   initMobileNavigation();
@@ -22,7 +23,6 @@ function initPageTransitions() {
     progressBar.id = 'washly-page-progress';
     document.body.prepend(progressBar);
   }
-
   // Finish entrance animation
   document.body.classList.add('page-enter');
   progressBar.style.width = '100%';
@@ -255,4 +255,62 @@ function initLogoutHandlers() {
       }, 400);
     });
   });
+}
+
+// --------------------------------------------------------------------------
+// Theme Switcher & Persistence Controller
+// --------------------------------------------------------------------------
+function initThemeSwitcher() {
+  if (window.WashlyApp && window.WashlyApp.Theme) {
+    window.WashlyApp.Theme.init();
+  }
+
+  // Delegated click handler for theme toggles anywhere in DOM
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.theme-toggle-btn');
+    if (!btn) return;
+
+    e.preventDefault();
+    if (window.WashlyApp && window.WashlyApp.Theme) {
+      const next = window.WashlyApp.Theme.toggle();
+      const message = next === 'dark' ? 'Mode Gelap diaktifkan' : 'Mode Terang diaktifkan';
+      window.WashlyApp.showToast(message, 'info');
+    }
+  });
+
+  // Inject fallback toggle button into headers if not already hardcoded
+  ensureThemeToggleButton();
+}
+
+function ensureThemeToggleButton() {
+  const existing = document.querySelector('.theme-toggle-btn');
+  if (existing) return;
+
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'theme-toggle-btn';
+  btn.id = 'theme-toggle';
+  const isDark = window.WashlyApp?.Theme?.current === 'dark';
+  btn.setAttribute('aria-label', isDark ? 'Beralih ke mode terang' : 'Beralih ke mode gelap');
+  btn.setAttribute('title', isDark ? 'Beralih ke Mode Terang' : 'Beralih ke Mode Gelap');
+  btn.innerHTML = `
+    <span class="theme-toggle-icon icon-sun" aria-hidden="true">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+    </span>
+    <span class="theme-toggle-icon icon-moon" aria-hidden="true">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+    </span>
+  `;
+
+  const customerContainer = document.querySelector('.app-header .header-container > .flex');
+  const adminContainer = document.querySelector('.admin-topbar > .flex:last-child');
+  const authHeader = document.querySelector('.auth-header');
+
+  if (customerContainer) {
+    customerContainer.prepend(btn);
+  } else if (adminContainer) {
+    adminContainer.prepend(btn);
+  } else if (authHeader) {
+    authHeader.appendChild(btn);
+  }
 }

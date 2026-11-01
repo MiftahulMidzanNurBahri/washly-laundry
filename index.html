@@ -4,6 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Washly Layanan Laundry Modern, Cepat & Terpercaya</title>
+  <script>
+    (function() {
+      try {
+        const theme = localStorage.getItem('washly_theme');
+        if (theme === 'dark') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      } catch (e) {}
+    })();
+  </script>
   <meta name="description" content="Sistem manajemen dan layanan laundry modern dengan pelacakan status pesanan real-time, penimbangan presisi, dan parfum mewah tahan lama.">
   
   <link rel="stylesheet" href="css/reset.css">
@@ -13,7 +25,7 @@
   <style>
     /* Hero section styles */
     .landing-hero {
-      background: linear-gradient(135deg, var(--color-primary-navy) 0%, #0d274c 60%, #163259 100%);
+      background: linear-gradient(135deg, var(--color-primary-navy) 0%, var(--color-navy-dark) 60%, var(--color-navy-light) 100%);
       color: #FFFFFF;
       padding: var(--space-3xl) 0 var(--space-2xl);
       position: relative;
@@ -27,7 +39,7 @@
       right: -10%;
       width: 600px;
       height: 600px;
-      background: radial-gradient(circle, rgba(23, 105, 255, 0.22) 0%, rgba(23, 105, 255, 0) 70%);
+      background: radial-gradient(circle, var(--color-electric-blue-glow) 0%, transparent 70%);
       border-radius: 50%;
       pointer-events: none;
     }
@@ -43,9 +55,9 @@
       display: inline-flex;
       align-items: center;
       gap: var(--space-xs);
-      background: rgba(23, 105, 255, 0.2);
-      border: 1px solid rgba(23, 105, 255, 0.4);
-      color: #93C5FD;
+      background: var(--color-electric-blue-light);
+      border: 1px solid var(--color-electric-blue-glow);
+      color: var(--color-electric-blue);
       padding: 0.35rem 0.85rem;
       border-radius: var(--radius-full);
       font-size: var(--font-size-xs);
@@ -63,11 +75,11 @@
     }
 
     .hero-title span {
-      color: #38BDF8;
+      color: #B9ACDA;
     }
 
     .hero-desc {
-      color: #CBD5E1;
+      color: #EEEAF8;
       font-size: var(--font-size-base);
       line-height: 1.6;
       margin-bottom: var(--space-xl);
@@ -75,7 +87,7 @@
     }
 
     .hero-tracking-card {
-      background: #FFFFFF;
+      background: var(--color-surface);
       color: var(--color-text-primary);
       border-radius: var(--radius-xl);
       padding: var(--space-xl);
@@ -84,7 +96,7 @@
     }
 
     .feature-card {
-      background: #FFFFFF;
+      background: var(--color-surface);
       border: 1px solid var(--color-border);
       border-radius: var(--radius-lg);
       padding: var(--space-xl);
@@ -132,7 +144,7 @@
 <body>
 
   <!-- Navigation Bar -->
-  <header class="app-header" style="position: sticky; top: 0; background: #FFFFFF; box-shadow: var(--shadow-xs);">
+  <header class="app-header" style="position: sticky; top: 0; background: var(--color-surface); box-shadow: var(--shadow-xs);">
     <div class="container header-container">
       <a href="index.html" class="brand-logo" id="header-brand-logo">
         <span>Washly</span>
@@ -146,6 +158,14 @@
       </nav>
 
       <div class="flex items-center gap-sm">
+        <button type="button" class="theme-toggle-btn" id="theme-toggle" aria-label="Beralih ke mode gelap" title="Beralih Mode Gelap / Terang">
+          <span class="theme-toggle-icon icon-sun" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+          </span>
+          <span class="theme-toggle-icon icon-moon" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+          </span>
+        </button>
         <a href="login.html" class="btn btn-secondary btn-sm" id="btn-nav-login">Masuk</a>
         <a href="register.html" class="btn btn-primary btn-sm" id="btn-nav-register">Daftar Akun</a>
         <button type="button" class="mobile-nav-toggle" aria-label="Toggle navigasi">Menu</button>
@@ -177,7 +197,7 @@
             </a>
           </div>
 
-          <div class="flex items-center gap-xl mt-xl flex-wrap" style="color: #94A3B8; font-size: var(--font-size-xs);">
+          <div class="flex items-center gap-xl mt-xl flex-wrap" style="color: #EEEAF8; font-size: var(--font-size-xs);">
             <div>1 Mesin 1 Pelanggan</div>
             <div>Timbangan Digital Terbuka</div>
             <div>Notifikasi Status Jelas</div>
@@ -215,7 +235,7 @@
   </section>
 
   <!-- Layanan Section -->
-  <section class="section" id="layanan" style="padding: var(--space-3xl) 0; background: #FFFFFF;">
+  <section class="section section-alternate" id="layanan" style="padding: var(--space-3xl) 0; background: var(--color-surface);">
     <div class="container">
       <div class="text-center mb-2xl">
         <span class="badge badge-service mb-xs">Katalog Layanan</span>
@@ -291,7 +311,7 @@
   </section>
 
   <!-- Keunggulan Section -->
-  <section class="section" id="keunggulan" style="padding: var(--space-3xl) 0; background: #FFFFFF;">
+  <section class="section section-alternate" id="keunggulan" style="padding: var(--space-3xl) 0; background: var(--color-surface);">
     <div class="container">
       <div class="hero-grid">
         <div>
@@ -326,7 +346,7 @@
         </div>
 
         <div>
-          <div class="card" style="padding: var(--space-xl); background: var(--color-background); border: 2px dashed #CBD5E1;">
+          <div class="card" style="padding: var(--space-xl); background: var(--color-background); border: 2px dashed var(--color-border);">
             <div class="flex items-center gap-xs mb-sm">
               <span class="badge badge-role">Demo Akun Cepat</span>
             </div>
@@ -355,11 +375,11 @@
   </section>
 
   <!-- Footer -->
-  <footer style="background-color: var(--color-primary-navy); color: #94A3B8; padding: var(--space-2xl) 0 var(--space-lg); font-size: var(--font-size-sm); margin-top: auto;">
+  <footer style="background-color: var(--color-navy-dark); color: #C6C0D6; padding: var(--space-2xl) 0 var(--space-lg); font-size: var(--font-size-sm); margin-top: auto;">
     <div class="container">
       <div class="grid grid-cols-4 gap-xl mb-xl">
         <div>
-          <a href="index.html" class="brand-logo" style="color:#FFFFFF; margin-bottom: var(--space-sm);">
+          <a href="index.html" class="brand-logo" style="color:#F3EFFB; margin-bottom: var(--space-sm);">
             <span>Washly</span>
           </a>
           <p class="text-xs text-muted mt-xs">
@@ -368,26 +388,26 @@
         </div>
 
         <div>
-          <strong style="color:#FFFFFF; display:block; margin-bottom:var(--space-sm);">Halaman</strong>
+          <strong style="color:#F3EFFB; display:block; margin-bottom:var(--space-sm);">Halaman</strong>
           <ul class="flex flex-col gap-xs text-xs">
-            <li><a href="index.html" style="color:#CBD5E1;">Beranda</a></li>
-            <li><a href="customer/order.html" style="color:#CBD5E1;">Buat Pesanan</a></li>
-            <li><a href="customer/history.html" style="color:#CBD5E1;">Riwayat Laundry</a></li>
-            <li><a href="login.html" style="color:#CBD5E1;">Masuk Akun</a></li>
+            <li><a href="index.html" style="color:#C6C0D6;">Beranda</a></li>
+            <li><a href="customer/order.html" style="color:#C6C0D6;">Buat Pesanan</a></li>
+            <li><a href="customer/history.html" style="color:#C6C0D6;">Riwayat Laundry</a></li>
+            <li><a href="login.html" style="color:#C6C0D6;">Masuk Akun</a></li>
           </ul>
         </div>
 
         <div>
-          <strong style="color:#FFFFFF; display:block; margin-bottom:var(--space-sm);">Akses Peran</strong>
+          <strong style="color:#F3EFFB; display:block; margin-bottom:var(--space-sm);">Akses Peran</strong>
           <ul class="flex flex-col gap-xs text-xs">
-            <li><a href="customer/dashboard.html" style="color:#CBD5E1;">Dashboard Pelanggan</a></li>
-            <li><a href="admin/dashboard.html" style="color:#CBD5E1;">Dashboard Admin</a></li>
-            <li><a href="admin/orders.html" style="color:#CBD5E1;">Antrean Pesanan Admin</a></li>
+            <li><a href="customer/dashboard.html" style="color:#C6C0D6;">Dashboard Pelanggan</a></li>
+            <li><a href="admin/dashboard.html" style="color:#C6C0D6;">Dashboard Admin</a></li>
+            <li><a href="admin/orders.html" style="color:#C6C0D6;">Antrean Pesanan Admin</a></li>
           </ul>
         </div>
 
         <div>
-          <strong style="color:#FFFFFF; display:block; margin-bottom:var(--space-sm);">Outlet & Kontak</strong>
+          <strong style="color:#F3EFFB; display:block; margin-bottom:var(--space-sm);">Outlet & Kontak</strong>
           <p class="text-xs text-muted">
             Jl. Kemang Raya No. 14, Jakarta Selatan<br>
             Buka setiap hari: 07:00 – 21:00 WIB<br>

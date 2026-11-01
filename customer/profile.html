@@ -4,6 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Profil Pelanggan — Washly</title>
+  <script>
+    (function() {
+      try {
+        var theme = localStorage.getItem('washly_theme');
+        if (theme === 'dark') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      } catch (e) {}
+    })();
+  </script>
   <meta name="description" content="Kelola informasi akun dan preferensi layanan laundry Anda di Washly.">
 
   <link rel="stylesheet" href="../css/reset.css">
@@ -76,7 +88,7 @@
           <div class="grid grid-cols-2 gap-md">
             <div class="form-group">
               <label for="profile-email" class="form-label">Alamat Email</label>
-              <input type="email" id="profile-email" class="form-control" readonly style="background-color: #F8FAFC;">
+              <input type="email" id="profile-email" class="form-control" readonly style="background-color: var(--color-surface-hover);">
               <span class="form-hint">Email digunakan sebagai ID akun masuk utama.</span>
             </div>
 

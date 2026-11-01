@@ -4,6 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Proses & Timbang Pesanan — Admin Washly</title>
+  <script>
+    (function() {
+      try {
+        var theme = localStorage.getItem('washly_theme');
+        if (theme === 'dark') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      } catch (e) {}
+    })();
+  </script>
   <meta name="description" content="Antarmuka penimbangan pakaian, kalkulasi biaya riil, dan pembaruan tahapan status pesanan Washly.">
 
   <link rel="stylesheet" href="../css/reset.css">
@@ -22,7 +34,7 @@
         <a href="dashboard.html" class="brand-logo" style="color: #FFFFFF;">
           <span>Washly</span>
         </a>
-        <span class="badge badge-role" style="font-size:10px; background:rgba(255,255,255,0.15); color:#93C5FD; border:none;">ADMIN</span>
+        <span class="badge badge-role" style="font-size:10px; background:rgba(255,255,255,0.15); color:#B9ACDA; border:none;">ADMIN</span>
       </div>
 
       <nav class="admin-sidebar-nav">
@@ -148,8 +160,8 @@
 
           <!-- Right Column: Weighing & Status Update Form -->
           <div>
-            <div class="card" style="box-shadow: var(--shadow-lg); border-color: #CBD5E1;">
-              <div class="card-header" style="background:#F8FAFC;">
+            <div class="card" style="box-shadow: var(--shadow-lg); border-color: var(--color-border);">
+              <div class="card-header" style="background:var(--color-surface-hover);">
                 <div>
                   <h3 class="card-title">Penimbangan & Transisi Status</h3>
                   <p class="card-subtitle">Wajib isi berat aktual pakaian saat serah terima di outlet</p>
