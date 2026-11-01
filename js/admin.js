@@ -72,7 +72,7 @@ function renderWeighingQueue(orders) {
 
   if (orders.length === 0) {
     container.innerHTML = `
-      <div class="empty-state" style="padding: var(--space-lg); background: #F8FAFC; border-radius: var(--radius-md);">
+      <div class="empty-state" style="padding: var(--space-lg); background: var(--color-surface-hover); border-radius: var(--radius-md);">
         <p class="text-sm text-secondary">Tidak ada cucian yang menunggu penimbangan saat ini. Semua pesanan telah diproses.</p>
       </div>
     `;
@@ -356,7 +356,7 @@ function renderStatusTransitions(order) {
 
   if (currentStatus === window.WASHLY_CONFIG.STATUS.DIAMBIL) {
     container.innerHTML = `
-      <div class="order-notice" style="background:#DCFCE7; border-color:#86EFAC; color:#15803D;">
+      <div class="order-notice" style="background:var(--color-success-bg); border-color:var(--color-success-border); color:var(--color-success);">
         <strong>Pesanan Telah Selesai (Diambil)</strong><br>
         Seluruh alur transaksi laundry untuk pesanan ini telah rampung. Pakaian telah diambil pelanggan.
       </div>

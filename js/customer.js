@@ -97,7 +97,7 @@ function renderOngoingOrderCard(order) {
 
   if (!order) {
     container.innerHTML = `
-      <div class="empty-state" style="padding: var(--space-xl) var(--space-md); border: 1px dashed var(--color-border); border-radius: var(--radius-lg); background: #FFFFFF;">
+      <div class="empty-state" style="padding: var(--space-xl) var(--space-md); border: 1px dashed var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface);">
         <div class="empty-state-title">Tidak Ada Pesanan Berjalan</div>
         <div class="empty-state-text">Semua pakaian Anda telah selesai atau belum ada pesanan baru.</div>
         <a href="order.html" class="btn btn-primary btn-sm">Buat Pesanan Laundry Sekarang</a>
@@ -451,7 +451,7 @@ function renderOrderDetailView(order) {
   if (weightBox) {
     if (order.actualWeight === null) {
       weightBox.innerHTML = `
-        <div class="order-notice mb-md" style="background:#FFFBEB; border-color:#FDE68A; color:#92400E;">
+        <div class="order-notice mb-md" style="background:var(--color-warning-bg); border-color:var(--color-warning-border); color:var(--color-warning);">
           <strong>Pakaian Menunggu Penimbangan</strong><br>
           Petugas outlet Washly akan menimbang cucian Anda saat pakaian diserahkan. Setelah ditimbang, berat riil dan total biaya pasti akan otomatis tampil di sini.
         </div>
