@@ -1,0 +1,2 @@
+# Prevent direct HTTP access to database configuration files.
+Require all denied
