@@ -21,22 +21,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function detectAdminPage() {
   const path = window.location.pathname;
-  if (path.includes('order-detail.html')) return 'order-detail';
-  if (path.includes('orders.html')) return 'orders';
-  if (path.includes('dashboard.html')) return 'dashboard';
+  if (/order-detail\.(php|html)$/i.test(path)) return 'order-detail';
+  if (/orders\.(php|html)$/i.test(path)) return 'orders';
+  if (/dashboard\.(php|html)$/i.test(path)) return 'dashboard';
   return '';
+}
+
+function ensureAdminSession() {
+  const user = window.WashlyAPI.getCurrentUser();
+  if (user && user.role === 'admin') {
+    return user;
+  }
+
+  if (window.WashlyAPI.isDemoMode()) {
+    const adminUser = window.WASHLY_MOCK_DATA.USERS.find(u => u.role === 'admin');
+    window.WashlyAPI.setCurrentUser(adminUser);
+    return adminUser;
+  }
+
+  window.location.href = '../login.php';
+  return null;
 }
 
 // --------------------------------------------------------------------------
 // Admin Dashboard
 // --------------------------------------------------------------------------
 async function initAdminDashboard() {
-  const user = window.WashlyAPI.getCurrentUser();
-  if (!user || user.role !== 'admin') {
-    // If not logged in as admin, auto set admin session for smooth demo or alert
-    const adminUser = window.WASHLY_MOCK_DATA.USERS.find(u => u.role === 'admin');
-    window.WashlyAPI.setCurrentUser(adminUser);
-  }
+  if (!ensureAdminSession()) return;
 
   try {
     const metrics = await window.WashlyAPI.orders.getMetrics();
@@ -93,7 +104,7 @@ function renderWeighingQueue(orders) {
                 Pelanggan: <strong>${WashlyValidators.escapeHtml(order.customerName)}</strong> • Layanan: ${WashlyValidators.escapeHtml(order.serviceName)}
               </div>
             </div>
-            <a href="order-detail.html?id=${encodeURIComponent(order.id)}" class="btn btn-primary btn-sm">
+            <a href="order-detail.php?id=${encodeURIComponent(order.id)}" class="btn btn-primary btn-sm">
               Timbang & Proses
             </a>
           </div>
@@ -121,7 +132,7 @@ function renderAdminRecentOrders(orders) {
       <td><strong>${window.WashlyApp.formatRupiah(order.finalCost)}</strong></td>
       <td>${window.WashlyApp.renderStatusBadge(order.status)}</td>
       <td class="text-right">
-        <a href="order-detail.html?id=${encodeURIComponent(order.id)}" class="btn btn-secondary btn-sm">Kelola</a>
+        <a href="order-detail.php?id=${encodeURIComponent(order.id)}" class="btn btn-secondary btn-sm">Kelola</a>
       </td>
     </tr>
   `).join('');
@@ -131,6 +142,8 @@ function renderAdminRecentOrders(orders) {
 // Admin Orders List Page
 // --------------------------------------------------------------------------
 async function initAdminOrdersList() {
+  if (!ensureAdminSession()) return;
+
   let currentSearch = '';
   let currentStatus = 'Semua';
   let currentService = 'Semua';
@@ -217,7 +230,7 @@ function renderAdminOrdersTable(orders) {
       <td><strong>${window.WashlyApp.formatRupiah(order.finalCost)}</strong></td>
       <td>${window.WashlyApp.renderStatusBadge(order.status)}</td>
       <td class="text-right">
-        <a href="order-detail.html?id=${encodeURIComponent(order.id)}" class="btn btn-navy btn-sm">
+        <a href="order-detail.php?id=${encodeURIComponent(order.id)}" class="btn btn-navy btn-sm">
           ${order.actualWeight === null ? 'Timbang & Proses' : 'Perbarui Status'}
         </a>
       </td>
@@ -229,11 +242,13 @@ function renderAdminOrdersTable(orders) {
 // Admin Order Detail & Processing Page
 // --------------------------------------------------------------------------
 async function initAdminOrderDetail() {
+  if (!ensureAdminSession()) return;
+
   const urlParams = new URLSearchParams(window.location.search);
   const orderId = urlParams.get('id');
 
   if (!orderId) {
-    window.location.href = 'orders.html';
+    window.location.href = 'orders.php';
     return;
   }
 
@@ -243,7 +258,7 @@ async function initAdminOrderDetail() {
   } catch (err) {
     window.WashlyApp.showToast('Pesanan tidak ditemukan.', 'error');
     setTimeout(() => {
-      window.location.href = 'orders.html';
+      window.location.href = 'orders.php';
     }, 1500);
   }
 }

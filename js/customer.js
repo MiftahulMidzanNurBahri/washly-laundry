@@ -27,11 +27,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function detectCustomerPage() {
   const path = window.location.pathname;
-  if (path.includes('order-detail.html')) return 'order-detail';
-  if (path.includes('order.html')) return 'order';
-  if (path.includes('history.html')) return 'history';
-  if (path.includes('profile.html')) return 'profile';
-  if (path.includes('dashboard.html')) return 'dashboard';
+  if (/order-detail\.(php|html)$/i.test(path)) return 'order-detail';
+  if (/order\.(php|html)$/i.test(path)) return 'order';
+  if (/history\.(php|html)$/i.test(path)) return 'history';
+  if (/profile\.(php|html)$/i.test(path)) return 'profile';
+  if (/dashboard\.(php|html)$/i.test(path)) return 'dashboard';
   return '';
 }
 
@@ -41,7 +41,7 @@ function detectCustomerPage() {
 async function initCustomerDashboard() {
   const user = window.WashlyAPI.getCurrentUser();
   if (!user) {
-    window.location.href = '../login.html';
+    window.location.href = '../login.php';
     return;
   }
 
@@ -86,7 +86,7 @@ async function initCustomerDashboard() {
         window.WashlyApp.showToast('Masukkan kode pesanan terlebih dahulu.', 'warning');
         return;
       }
-      window.location.href = `order-detail.html?id=${encodeURIComponent(code)}`;
+      window.location.href = `order-detail.php?id=${encodeURIComponent(code)}`;
     });
   }
 }
@@ -100,7 +100,7 @@ function renderOngoingOrderCard(order) {
       <div class="empty-state" style="padding: var(--space-xl) var(--space-md); border: 1px dashed var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface);">
         <div class="empty-state-title">Tidak Ada Pesanan Berjalan</div>
         <div class="empty-state-text">Semua pakaian Anda telah selesai atau belum ada pesanan baru.</div>
-        <a href="order.html" class="btn btn-primary btn-sm">Buat Pesanan Laundry Sekarang</a>
+        <a href="order.php" class="btn btn-primary btn-sm">Buat Pesanan Laundry Sekarang</a>
       </div>
     `;
     return;
@@ -150,7 +150,7 @@ function renderOngoingOrderCard(order) {
               ? `Berat: <strong>${order.actualWeight} ${order.unit}</strong> | Total: <strong style="color:var(--color-primary-navy);">${window.WashlyApp.formatRupiah(order.finalCost)}</strong>` 
               : `Estimasi: <strong>${order.estimatedWeight} ${order.unit}</strong> (Menunggu Penimbangan)`}
           </div>
-          <a href="order-detail.html?id=${encodeURIComponent(order.id)}" class="btn btn-outline-primary btn-sm">
+          <a href="order-detail.php?id=${encodeURIComponent(order.id)}" class="btn btn-outline-primary btn-sm">
             Lihat Detail & Lacak
           </a>
         </div>
@@ -183,7 +183,7 @@ function renderRecentOrdersTable(orders) {
       <td><strong>${window.WashlyApp.formatRupiah(order.finalCost)}</strong></td>
       <td>${window.WashlyApp.renderStatusBadge(order.status)}</td>
       <td class="text-right">
-        <a href="order-detail.html?id=${encodeURIComponent(order.id)}" class="btn btn-secondary btn-sm">Detail</a>
+        <a href="order-detail.php?id=${encodeURIComponent(order.id)}" class="btn btn-secondary btn-sm">Detail</a>
       </td>
     </tr>
   `).join('');
@@ -198,7 +198,7 @@ function initOrderCreationPage() {
 
   const user = window.WashlyAPI.getCurrentUser();
   if (!user) {
-    window.location.href = '../login.html';
+    window.location.href = '../login.php';
     return;
   }
 
@@ -276,7 +276,7 @@ function initOrderCreationPage() {
       window.WashlyApp.showToast(`Pesanan ${result.order.id} berhasil dibuat!`, 'success');
 
       setTimeout(() => {
-        window.location.href = `order-detail.html?id=${encodeURIComponent(result.order.id)}`;
+        window.location.href = `order-detail.php?id=${encodeURIComponent(result.order.id)}`;
       }, 600);
     } catch (err) {
       window.WashlyApp.showToast(err.message || 'Gagal membuat pesanan.', 'error');
@@ -293,26 +293,43 @@ function renderServicesSelection() {
   const container = document.getElementById('services-grid-container');
   if (!container) return;
 
-  const services = window.WASHLY_CONFIG.SERVICES;
-  container.innerHTML = services.map((svc, idx) => `
-    <div class="service-card ${idx === 0 ? 'selected' : ''}" data-service-id="${svc.id}" data-price="${svc.price}" data-unit="${svc.unit}">
-      <div class="service-name">${WashlyValidators.escapeHtml(svc.name)}</div>
-      <div class="service-price">${window.WashlyApp.formatRupiah(svc.price)} / ${svc.unit}</div>
-      <div class="service-desc">${WashlyValidators.escapeHtml(svc.description)}</div>
-      <div class="service-duration">
-        <span>Estimasi: ${svc.duration}</span>
+  const paintServices = (services) => {
+    container.innerHTML = services.map((svc, idx) => `
+      <div class="service-card ${idx === 0 ? 'selected' : ''}" data-service-id="${svc.id}" data-price="${svc.price}" data-unit="${svc.unit}">
+        <div class="service-name">${WashlyValidators.escapeHtml(svc.name)}</div>
+        <div class="service-price">${window.WashlyApp.formatRupiah(svc.price)} / ${svc.unit}</div>
+        <div class="service-desc">${WashlyValidators.escapeHtml(svc.description)}</div>
+        <div class="service-duration">
+          <span>Estimasi: ${svc.duration}</span>
+        </div>
       </div>
-    </div>
-  `).join('');
+    `).join('');
 
-  // Attach card selection listeners
-  container.querySelectorAll('.service-card').forEach(card => {
-    card.addEventListener('click', () => {
-      container.querySelectorAll('.service-card').forEach(c => c.classList.remove('selected'));
-      card.classList.add('selected');
-      updateOrderCalculation();
+    // Attach card selection listeners
+    container.querySelectorAll('.service-card').forEach(card => {
+      card.addEventListener('click', () => {
+        container.querySelectorAll('.service-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        updateOrderCalculation();
+      });
     });
-  });
+  };
+
+  paintServices(window.WASHLY_CONFIG.SERVICES);
+
+  // When connected to PHP backend, sync service catalog dynamically from MySQL if available
+  if (!window.WashlyAPI.isDemoMode()) {
+    window.WashlyAPI.services.list()
+      .then(remoteServices => {
+        if (Array.isArray(remoteServices) && remoteServices.length > 0) {
+          paintServices(remoteServices);
+          updateOrderCalculation();
+        }
+      })
+      .catch(() => {
+        // Gracefully keep local catalog if /services/list.php is not yet available
+      });
+  }
 }
 
 function renderScentsSelection() {
@@ -385,7 +402,7 @@ async function initOrderDetailPage() {
   const orderId = urlParams.get('id');
 
   if (!orderId) {
-    window.location.href = 'dashboard.html';
+    window.location.href = 'dashboard.php';
     return;
   }
 
@@ -399,7 +416,7 @@ async function initOrderDetailPage() {
         <div class="empty-state">
           <div class="empty-state-title">Pesanan Tidak Ditemukan</div>
           <div class="empty-state-text">Pesanan dengan kode <strong>${WashlyValidators.escapeHtml(orderId)}</strong> tidak terdaftar dalam sistem Washly.</div>
-          <a href="dashboard.html" class="btn btn-secondary">Kembali ke Dashboard</a>
+          <a href="dashboard.php" class="btn btn-secondary">Kembali ke Dashboard</a>
         </div>
       `;
     }
@@ -549,7 +566,7 @@ function findTimelineTime(timeline, statusName) {
 async function initCustomerHistoryPage() {
   const user = window.WashlyAPI.getCurrentUser();
   if (!user) {
-    window.location.href = '../login.html';
+    window.location.href = '../login.php';
     return;
   }
 
@@ -602,7 +619,7 @@ async function initCustomerHistoryPage() {
         <td><strong>${window.WashlyApp.formatRupiah(order.finalCost)}</strong></td>
         <td>${window.WashlyApp.renderStatusBadge(order.status)}</td>
         <td class="text-right">
-          <a href="order-detail.html?id=${encodeURIComponent(order.id)}" class="btn btn-secondary btn-sm">Lihat Detail</a>
+          <a href="order-detail.php?id=${encodeURIComponent(order.id)}" class="btn btn-secondary btn-sm">Lihat Detail</a>
         </td>
       </tr>
     `).join('');
@@ -637,7 +654,7 @@ async function initCustomerHistoryPage() {
 function initCustomerProfilePage() {
   const user = window.WashlyAPI.getCurrentUser();
   if (!user) {
-    window.location.href = '../login.html';
+    window.location.href = '../login.php';
     return;
   }
 
@@ -647,13 +664,21 @@ function initCustomerProfilePage() {
   const addressInput = document.getElementById('profile-address');
   const form = document.getElementById('customer-profile-form');
 
+  // Sync profile card header with active user session
+  const cardTitleEl = document.querySelector('main .card-header .card-title');
+  const cardAvatarEl = document.querySelector('main .card-header .user-avatar');
+  if (cardTitleEl && user.name) cardTitleEl.textContent = user.name;
+  if (cardAvatarEl) {
+    cardAvatarEl.textContent = user.avatarText || (user.name ? user.name.substring(0, 2).toUpperCase() : 'U');
+  }
+
   if (nameInput) nameInput.value = user.name || '';
   if (emailInput) emailInput.value = user.email || '';
   if (phoneInput) phoneInput.value = user.phone || '';
   if (addressInput) addressInput.value = user.address || '';
 
   if (form) {
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
       if (!WashlyValidators.minLength(nameInput.value, 3)) {
@@ -666,16 +691,29 @@ function initCustomerProfilePage() {
         return;
       }
 
-      const updatedUser = {
-        ...user,
-        name: nameInput.value.trim(),
-        phone: phoneInput.value.trim(),
-        address: addressInput.value.trim()
-      };
+      const submitBtn = form.querySelector('button[type="submit"]');
+      const originalText = submitBtn ? submitBtn.textContent : '';
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Menyimpan...';
+      }
 
-      window.WashlyAPI.setCurrentUser(updatedUser);
-      window.WashlyApp.showToast('Profil berhasil diperbarui.', 'success');
-      setTimeout(() => window.location.reload(), 400);
+      try {
+        await window.WashlyAPI.users.updateProfile({
+          id: user.id,
+          name: nameInput.value.trim(),
+          phone: phoneInput.value.trim(),
+          address: addressInput.value.trim()
+        });
+        window.WashlyApp.showToast('Profil berhasil diperbarui.', 'success');
+        setTimeout(() => window.location.reload(), 400);
+      } catch (err) {
+        window.WashlyApp.showToast(err.message || 'Gagal memperbarui profil.', 'error');
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = originalText;
+        }
+      }
     });
   }
 }

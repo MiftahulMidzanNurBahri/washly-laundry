@@ -81,9 +81,9 @@ function initLoginForm() {
 
       setTimeout(() => {
         if (result.user.role === 'admin') {
-          window.location.href = 'admin/dashboard.html';
+          window.location.href = 'admin/dashboard.php';
         } else {
-          window.location.href = 'customer/dashboard.html';
+          window.location.href = 'customer/dashboard.php';
         }
       }, 500);
     } catch (err) {
@@ -165,7 +165,7 @@ function initRegisterForm() {
       await window.WashlyAPI.auth.register(payload);
       window.WashlyApp.showToast('Akun berhasil dibuat! Mengalihkan ke dashboard...', 'success');
       setTimeout(() => {
-        window.location.href = 'customer/dashboard.html';
+        window.location.href = 'customer/dashboard.php';
       }, 600);
     } catch (err) {
       window.WashlyApp.showToast(err.message || 'Pendaftaran gagal.', 'error');
@@ -177,6 +177,12 @@ function initRegisterForm() {
 
 // Demo Account Auto-Fill buttons
 function initDemoAccountShortcuts() {
+  const demoBox = document.querySelector('.auth-demo-accounts');
+  if (demoBox && window.WashlyAPI && !window.WashlyAPI.isDemoMode()) {
+    demoBox.style.display = 'none';
+    return;
+  }
+
   const btnCustomer = document.getElementById('btn-fill-customer');
   const btnAdmin = document.getElementById('btn-fill-admin');
 

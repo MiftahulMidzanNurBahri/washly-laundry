@@ -886,6 +886,23 @@ body,
   border-bottom: 1px solid var(--color-border);
 }
 
+/* Live Backend Mode (when Demo Banner is disabled) sticky offset alignment */
+body.live-mode .app-header,
+body.live-mode .admin-topbar {
+  top: 0;
+}
+body.live-mode .admin-layout {
+  min-height: 100vh;
+}
+@media (max-width: 768px) {
+  body.live-mode .nav-menu {
+    top: 70px;
+  }
+  body.live-mode .admin-sidebar {
+    top: 0;
+  }
+}
+
 /* Empty State Background in Dark Mode */
 [data-theme="dark"] .empty-state {
   background-color: var(--color-surface) !important;

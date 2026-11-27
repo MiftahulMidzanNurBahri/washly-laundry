@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initThemeSwitcher();
   initPageTransitions();
   initDemoBanner();
+  syncHeaderUserProfile();
   initMobileNavigation();
   highlightActiveNav();
   initLogoutHandlers();
@@ -86,6 +87,11 @@ function initPageTransitions() {
 // Demo Banner & Persona Switcher
 // --------------------------------------------------------------------------
 function initDemoBanner() {
+  if (window.WashlyAPI && !window.WashlyAPI.isDemoMode()) {
+    document.body.classList.add('live-mode');
+    return;
+  }
+
   const existing = document.querySelector('.demo-banner');
   if (existing) return; // Already present in static HTML
 
@@ -121,7 +127,7 @@ function initDemoBanner() {
     window.WashlyAPI.setCurrentUser(customerUser);
     window.WashlyApp.showToast('Beralih peran ke Pelanggan (Budi Santoso)', 'info');
     setTimeout(() => {
-      window.location.href = rootPrefix + 'customer/dashboard.html';
+      window.location.href = rootPrefix + 'customer/dashboard.php';
     }, 300);
   });
 
@@ -131,7 +137,7 @@ function initDemoBanner() {
     window.WashlyAPI.setCurrentUser(adminUser);
     window.WashlyApp.showToast('Beralih peran ke Admin (Siti Aminah)', 'info');
     setTimeout(() => {
-      window.location.href = rootPrefix + 'admin/dashboard.html';
+      window.location.href = rootPrefix + 'admin/dashboard.php';
     }, 300);
   });
 
@@ -261,7 +267,7 @@ function initMobileNavigation() {
 // --------------------------------------------------------------------------
 function highlightActiveNav() {
   const currentPath = window.location.pathname;
-  const currentFile = currentPath.substring(currentPath.lastIndexOf('/') + 1) || 'index.html';
+  const currentFile = currentPath.substring(currentPath.lastIndexOf('/') + 1) || 'index.php';
 
   const links = document.querySelectorAll('.nav-link, .admin-nav-item');
   links.forEach(link => {
@@ -275,19 +281,45 @@ function highlightActiveNav() {
 }
 
 // --------------------------------------------------------------------------
+// Sync Header User Profile Widget (Customer & Admin)
+// --------------------------------------------------------------------------
+function syncHeaderUserProfile() {
+  if (!window.WashlyAPI) return;
+  const path = window.location.pathname;
+  const isProtectedArea = path.includes('/customer/') || path.includes('/admin/');
+  if (!isProtectedArea) return;
+
+  const user = window.WashlyAPI.getCurrentUser();
+  if (!user) return;
+
+  const widgets = document.querySelectorAll('.user-profile-widget');
+  widgets.forEach(widget => {
+    const nameEl = widget.querySelector('.user-name');
+    const avatarEl = widget.querySelector('.user-avatar');
+    if (nameEl && user.name) {
+      nameEl.textContent = user.name;
+    }
+    if (avatarEl) {
+      const initials = user.avatarText || (user.name ? user.name.substring(0, 2).toUpperCase() : 'U');
+      avatarEl.textContent = initials;
+    }
+  });
+}
+
+// --------------------------------------------------------------------------
 // Logout Handlers
 // --------------------------------------------------------------------------
 function initLogoutHandlers() {
   const logoutButtons = document.querySelectorAll('.btn-logout');
   logoutButtons.forEach(btn => {
-    btn.addEventListener('click', (e) => {
+    btn.addEventListener('click', async (e) => {
       e.preventDefault();
-      window.WashlyAPI.auth.logout();
+      await window.WashlyAPI.auth.logout();
       window.WashlyApp.showToast('Anda telah keluar dari akun.', 'info');
       const isSubdir = window.location.pathname.includes('/customer/') || window.location.pathname.includes('/admin/');
       const rootPrefix = isSubdir ? '../' : './';
       setTimeout(() => {
-        window.location.href = rootPrefix + 'login.html';
+        window.location.href = rootPrefix + 'login.php';
       }, 400);
     });
   });
