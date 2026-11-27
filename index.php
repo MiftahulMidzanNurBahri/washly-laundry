@@ -184,8 +184,8 @@ require_once __DIR__ . '/includes/head.php';
             <a href="customer/order.php" class="btn btn-primary btn-lg" id="btn-hero-order">
               Buat Pesanan Laundry
             </a>
-            <a href="login.php" class="btn btn-secondary btn-lg" style="background: rgba(255,255,255,0.1); color:#FFFFFF; border-color: rgba(255,255,255,0.25);">
-              Buka Portal Pelanggan
+            <a href="register.php" class="btn btn-secondary btn-lg" style="background: rgba(255,255,255,0.1); color:#FFFFFF; border-color: rgba(255,255,255,0.25);">
+              Daftar Akun Baru
             </a>
           </div>
 
@@ -265,13 +265,13 @@ require_once __DIR__ . '/includes/head.php';
         <div class="card" style="padding: var(--space-lg); text-align:center;">
           <div class="step-circle-number" style="margin: 0 auto var(--space-md);">1</div>
           <h4>Buat Pesanan</h4>
-          <p class="text-xs text-secondary mt-xs">Pilih paket laundry, tentukan estimasi dan pilihan aroma parfum kesukaan Anda di sistem.</p>
+          <p class="text-xs text-secondary mt-xs">Pilih paket layanan laundry dan konfirmasi alamat penjemputan kurir Anda di sistem.</p>
         </div>
 
         <div class="card" style="padding: var(--space-lg); text-align:center;">
           <div class="step-circle-number" style="margin: 0 auto var(--space-md); background:var(--color-electric-blue);">2</div>
-          <h4>Serahkan Pakaian</h4>
-          <p class="text-xs text-secondary mt-xs">Bawa pakaian ke outlet Washly. Status awal menjadi <strong>Menunggu Penyerahan</strong>.</p>
+          <h4>Penjemputan Kurir</h4>
+          <p class="text-xs text-secondary mt-xs">Kurir Washly menjemput pakaian ke alamat Anda. Status awal menjadi <strong>Menunggu Penyerahan</strong>.</p>
         </div>
 
         <div class="card" style="padding: var(--space-lg); text-align:center;">
@@ -325,27 +325,17 @@ require_once __DIR__ . '/includes/head.php';
         </div>
 
         <div>
-          <div class="card" style="padding: var(--space-xl); background: var(--color-background); border: 2px dashed var(--color-border);">
+          <div class="card" style="padding: var(--space-xl); background: var(--color-background); border: 1px solid var(--color-border);">
             <div class="flex items-center gap-xs mb-sm">
-              <span class="badge badge-role">Demo Akun Cepat</span>
+              <span class="badge badge-service">Mulai Sekarang</span>
             </div>
-            <h4>Ingin Menguji Sistem Ini?</h4>
+            <h4>Siap Mencuci Tanpa Repot?</h4>
             <p class="text-sm text-secondary mt-xs mb-md">
-              Anda dapat langsung masuk tanpa repot mendaftar dengan akun demo yang telah kami sediakan:
+              Daftarkan akun Anda dalam hitungan detik untuk mulai memesan layanan jemput-antar laundry dan memantau status cucian secara langsung.
             </p>
-            <div class="flex flex-col gap-sm">
-              <div class="p-sm card" style="padding: var(--space-sm) var(--space-md);">
-                <strong>Pelanggan Demo:</strong>
-                <div class="text-xs text-muted">budi@example.com (Password: password123)</div>
-              </div>
-              <div class="p-sm card" style="padding: var(--space-sm) var(--space-md);">
-                <strong>Admin Outlet Demo:</strong>
-                <div class="text-xs text-muted">admin@washly.id (Password: admin123)</div>
-              </div>
-            </div>
             <div class="flex gap-sm mt-md">
-              <a href="login.php" class="btn btn-primary btn-sm" style="flex:1;">Masuk ke Sistem</a>
-              <a href="customer/dashboard.php" class="btn btn-secondary btn-sm" style="flex:1;">Dashboard Langsung</a>
+              <a href="login.php" class="btn btn-secondary btn-sm" style="flex:1;">Masuk</a>
+              <a href="register.php" class="btn btn-primary btn-sm" style="flex:1;">Daftar Akun</a>
             </div>
           </div>
         </div>
@@ -370,18 +360,17 @@ require_once __DIR__ . '/includes/head.php';
           <strong style="color:#F3EFFB; display:block; margin-bottom:var(--space-sm);">Halaman</strong>
           <ul class="flex flex-col gap-xs text-xs">
             <li><a href="index.php" style="color:#C6C0D6;">Beranda</a></li>
-            <li><a href="customer/order.php" style="color:#C6C0D6;">Buat Pesanan</a></li>
-            <li><a href="customer/history.php" style="color:#C6C0D6;">Riwayat Laundry</a></li>
-            <li><a href="login.php" style="color:#C6C0D6;">Masuk Akun</a></li>
+            <li><a href="#layanan" style="color:#C6C0D6;">Katalog Layanan</a></li>
+            <li><a href="#cara-kerja" style="color:#C6C0D6;">Cara Kerja</a></li>
+            <li><a href="#lacak" style="color:#C6C0D6;">Lacak Pesanan</a></li>
           </ul>
         </div>
 
         <div>
-          <strong style="color:#F3EFFB; display:block; margin-bottom:var(--space-sm);">Akses Peran</strong>
+          <strong style="color:#F3EFFB; display:block; margin-bottom:var(--space-sm);">Akun</strong>
           <ul class="flex flex-col gap-xs text-xs">
-            <li><a href="customer/dashboard.php" style="color:#C6C0D6;">Dashboard Pelanggan</a></li>
-            <li><a href="admin/dashboard.php" style="color:#C6C0D6;">Dashboard Admin</a></li>
-            <li><a href="admin/orders.php" style="color:#C6C0D6;">Antrean Pesanan Admin</a></li>
+            <li><a href="login.php" style="color:#C6C0D6;">Masuk</a></li>
+            <li><a href="register.php" style="color:#C6C0D6;">Daftar Akun</a></li>
           </ul>
         </div>
 

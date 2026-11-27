@@ -74,7 +74,6 @@ require_once __DIR__ . '/../includes/customer-header.php';
               <th>Kode Pesanan</th>
               <th>Tanggal</th>
               <th>Layanan</th>
-              <th>Parfum</th>
               <th>Berat / Qty</th>
               <th>Total Biaya</th>
               <th>Status</th>

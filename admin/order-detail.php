@@ -59,8 +59,12 @@ require_once __DIR__ . '/../includes/head.php';
                     <strong id="admin-detail-service" style="color:var(--color-electric-blue);">-</strong>
                   </div>
                   <div>
-                    <span class="text-xs text-muted block">Pilihan Parfum:</span>
-                    <strong id="admin-detail-scent">-</strong>
+                    <span class="text-xs text-muted block">Metode Penyerahan:</span>
+                    <strong id="admin-detail-handover">Penjemputan Kurir</strong>
+                  </div>
+                  <div>
+                    <span class="text-xs text-muted block">Parfum Laundry:</span>
+                    <strong id="admin-detail-scent">Mengikuti Parfum Laundry</strong>
                   </div>
                   <div>
                     <span class="text-xs text-muted block">Waktu Dibuat:</span>

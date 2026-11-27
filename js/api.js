@@ -97,13 +97,13 @@ const WashlyAPI = (() => {
       serviceName: String(raw.serviceName ?? raw.service_name ?? (fallbackSvc ? fallbackSvc.name : '-')),
       unit: String(raw.unit ?? (fallbackSvc ? fallbackSvc.unit : 'kg')),
       pricePerUnit: Number(raw.pricePerUnit ?? raw.price_per_unit ?? (fallbackSvc ? fallbackSvc.price : 0)),
-      scent: String(raw.scent ?? 'Ocean Fresh'),
-      scentPrice: Number(raw.scentPrice ?? raw.scent_price ?? 0),
-      estimatedWeight: Number(raw.estimatedWeight ?? raw.estimated_weight ?? 1),
+      scent: CONFIG.DEFAULT_SCENT || 'Mengikuti Parfum Laundry',
+      scentPrice: 0,
+      estimatedWeight: null,
       actualWeight: (rawActual === null || rawActual === undefined || rawActual === '') ? null : Number(rawActual),
       finalCost: (rawFinal === null || rawFinal === undefined || rawFinal === '') ? null : Number(rawFinal),
       notes: String(raw.notes ?? ''),
-      handoverMethod: String(raw.handoverMethod ?? raw.handover_method ?? 'antar-sendiri'),
+      handoverMethod: 'jemput-kurir',
       status: String(raw.status ?? CONFIG.STATUS.MENUNGGU),
       createdAt: String(raw.createdAt ?? raw.created_at ?? ''),
       timeline: Array.isArray(raw.timeline)
@@ -198,20 +198,41 @@ const WashlyAPI = (() => {
     localStorage.setItem(CONFIG.STORAGE_KEYS.ORDERS, JSON.stringify(orders));
   }
 
+  // Local storage users helper (for standalone local auth when MySQL backend is off)
+  function buildSeedUsers() {
+    return (SEED.USERS || []).map(u => ({
+      ...u,
+      password: u.password || (u.role === 'admin' ? 'admin123' : 'password123')
+    }));
+  }
+
+  function getStoredUsers() {
+    const key = CONFIG.STORAGE_KEYS.USERS || 'washly_users_store_v1';
+    try {
+      const data = localStorage.getItem(key);
+      if (!data) {
+        const initialUsers = buildSeedUsers();
+        localStorage.setItem(key, JSON.stringify(initialUsers));
+        return initialUsers;
+      }
+      return JSON.parse(data);
+    } catch (e) {
+      return buildSeedUsers();
+    }
+  }
+
+  function saveStoredUsers(users) {
+    const key = CONFIG.STORAGE_KEYS.USERS || 'washly_users_store_v1';
+    localStorage.setItem(key, JSON.stringify(users));
+  }
+
   // Local storage user session helper (Stores only non-sensitive profile info, NEVER passwords)
   function getCurrentUser() {
     try {
       const data = sessionStorage.getItem(CONFIG.STORAGE_KEYS.CURRENT_USER);
-      if (data) return JSON.parse(data);
-      // Only auto-seed default user when Demo Mode is enabled
-      if (isDemoMode()) {
-        const defaultUser = SEED.USERS[0];
-        sessionStorage.setItem(CONFIG.STORAGE_KEYS.CURRENT_USER, JSON.stringify(defaultUser));
-        return defaultUser;
-      }
-      return null;
+      return data ? JSON.parse(data) : null;
     } catch (e) {
-      return isDemoMode() ? SEED.USERS[0] : null;
+      return null;
     }
   }
 
@@ -243,39 +264,25 @@ const WashlyAPI = (() => {
     // ------------------------------------------------------------------------
     auth: {
       async login(credentials) {
-        const { email, password, role } = credentials;
+        const { email, password } = credentials;
+        const normalizedEmail = String(email || '').trim().toLowerCase();
 
         if (isDemoMode()) {
           await simulateLatency(250);
-          // Match against seed users
-          const user = SEED.USERS.find(u => u.email.toLowerCase() === email.toLowerCase());
-          if (!user) {
-            // In demo mode, if unregistered email, create mock session if role matches
-            const demoUser = {
-              id: 'usr-' + Date.now().toString(36),
-              name: email.split('@')[0],
-              email: email,
-              phone: '0812-0000-0000',
-              address: 'Alamat Pengguna',
-              role: role || 'customer',
-              avatarText: email.substring(0, 2).toUpperCase()
-            };
-            setCurrentUser(demoUser);
-            return { success: true, user: demoUser, isDemo: true };
+          const users = getStoredUsers();
+          const matched = users.find(u => String(u.email || '').toLowerCase() === normalizedEmail);
+          if (!matched || matched.password !== password) {
+            throw new Error('Email atau kata sandi tidak cocok.');
           }
 
-          // Check role alignment
-          if (role && user.role !== role) {
-            throw new Error(`Akun ini terdaftar sebagai ${user.role}, bukan ${role}.`);
-          }
-
-          setCurrentUser(user);
-          return { success: true, user, isDemo: true };
+          const cleanUser = normalizeUser(matched);
+          setCurrentUser(cleanUser);
+          return { success: true, user: cleanUser, isDemo: true };
         } else {
           // PHP Endpoint: POST /backend/api/auth/login.php
           const payload = await apiRequest('/auth/login.php', {
             method: 'POST',
-            body: JSON.stringify({ email, password, role })
+            body: JSON.stringify({ email: normalizedEmail, password })
           });
 
           if (payload && payload.token) {
@@ -288,31 +295,39 @@ const WashlyAPI = (() => {
             throw new Error('Data pengguna dari server tidak lengkap.');
           }
 
-          if (role && user.role !== role) {
-            setAuthToken(null);
-            throw new Error(`Akun ini terdaftar sebagai ${user.role}, bukan ${role}.`);
-          }
-
           setCurrentUser(user);
           return { success: true, user, isDemo: false };
         }
       },
 
       async register(payload) {
+        const normalizedEmail = String(payload.email || '').trim().toLowerCase();
+
         if (isDemoMode()) {
           await simulateLatency(300);
-          const newUser = {
+          const users = getStoredUsers();
+          const exists = users.some(u => String(u.email || '').toLowerCase() === normalizedEmail);
+          if (exists) {
+            throw new Error('Email sudah terdaftar. Silakan masuk ke akun Anda.');
+          }
+
+          const newUserRecord = {
             id: 'usr-' + Date.now().toString(36),
             name: payload.name,
-            email: payload.email,
+            email: normalizedEmail,
             phone: payload.phone,
             address: payload.address || '',
+            password: payload.password,
             role: 'customer',
             avatarText: payload.name.substring(0, 2).toUpperCase(),
             registeredAt: new Date().toISOString()
           };
-          setCurrentUser(newUser);
-          return { success: true, user: newUser, isDemo: true };
+          users.push(newUserRecord);
+          saveStoredUsers(users);
+
+          const cleanUser = normalizeUser(newUserRecord);
+          setCurrentUser(cleanUser);
+          return { success: true, user: cleanUser, isDemo: true };
         } else {
           // PHP Endpoint: POST /backend/api/auth/register.php
           const resData = await apiRequest('/auth/register.php', {
@@ -369,6 +384,12 @@ const WashlyAPI = (() => {
             phone: payload.phone,
             address: payload.address
           });
+          const users = getStoredUsers();
+          const idx = users.findIndex(u => u.id === current.id || String(u.email || '').toLowerCase() === String(current.email || '').toLowerCase());
+          if (idx !== -1) {
+            users[idx] = { ...users[idx], name: updatedUser.name, phone: updatedUser.phone, address: updatedUser.address, avatarText: updatedUser.avatarText };
+            saveStoredUsers(users);
+          }
           setCurrentUser(updatedUser);
           return { success: true, user: updatedUser, isDemo: true };
         }
@@ -401,12 +422,13 @@ const WashlyAPI = (() => {
     services: {
       async list() {
         if (isDemoMode()) {
-          return CONFIG.SERVICES;
+          return CONFIG.SERVICES.filter(s => s.id !== 'sepatu-tas');
         }
         // PHP Endpoint: GET /backend/api/services/list.php
         const resData = await apiRequest('/services/list.php');
         const list = Array.isArray(resData) ? resData : (resData && Array.isArray(resData.services) ? resData.services : null);
-        return list ? list.map(normalizeService) : CONFIG.SERVICES;
+        const normalized = list ? list.map(normalizeService) : CONFIG.SERVICES;
+        return normalized.filter(s => s.id !== 'sepatu-tas');
       },
 
       getById(serviceId) {
@@ -500,7 +522,6 @@ const WashlyAPI = (() => {
           await simulateLatency(300);
           const orders = getStoredOrders();
           const service = CONFIG.SERVICES.find(s => s.id === payload.serviceId) || CONFIG.SERVICES[0];
-          const scentObj = CONFIG.SCENTS.find(sc => sc.name === payload.scent) || CONFIG.SCENTS[0];
 
           const newId = 'WSH-' + new Date().toISOString().slice(0,7).replace('-','') + '-' + 
                         String(orders.length + 1).padStart(3, '0');
@@ -512,24 +533,25 @@ const WashlyAPI = (() => {
             customerId: payload.customerId,
             customerName: payload.customerName,
             customerPhone: payload.customerPhone,
+            customerAddress: payload.customerAddress || '',
             serviceId: service.id,
             serviceName: service.name,
             unit: service.unit,
             pricePerUnit: service.price,
-            scent: payload.scent || 'Ocean Fresh',
-            scentPrice: scentObj.price || 0,
-            estimatedWeight: Number(payload.estimatedWeight) || 1.0,
-            actualWeight: null, // Initial status: must wait for admin reception & weighing
-            finalCost: null,    // Only computed once admin records actual weight
+            scent: CONFIG.DEFAULT_SCENT || 'Mengikuti Parfum Laundry',
+            scentPrice: 0,
+            estimatedWeight: null,
+            actualWeight: null, // Weighed by laundry staff upon pickup reception
+            finalCost: null,    // Computed once laundry records actual weight
             notes: payload.notes || '',
-            handoverMethod: payload.handoverMethod || 'antar-sendiri',
+            handoverMethod: 'jemput-kurir',
             status: CONFIG.STATUS.MENUNGGU,
             createdAt: nowIso,
             timeline: [
               {
                 status: CONFIG.STATUS.MENUNGGU,
                 timestamp: nowIso,
-                note: 'Pesanan baru telah berhasil dibuat oleh pelanggan.'
+                note: 'Pesanan baru berhasil dibuat. Menunggu penjemputan kurir Washly.'
               }
             ]
           };
@@ -540,9 +562,16 @@ const WashlyAPI = (() => {
         }
 
         // PHP Endpoint: POST /backend/api/orders/create.php
+        // Includes default scent & placeholder estimatedWeight=1 for compatibility with backend DB schema
+        const backendPayload = {
+          ...payload,
+          handoverMethod: 'jemput-kurir',
+          scent: 'Ocean Fresh',
+          estimatedWeight: 1
+        };
         const resData = await apiRequest('/orders/create.php', {
           method: 'POST',
-          body: JSON.stringify(payload)
+          body: JSON.stringify(backendPayload)
         });
         const rawOrder = (resData && resData.order) ? resData.order : resData;
         return { success: true, order: normalizeOrder({ ...payload, ...(rawOrder || {}) }), isDemo: false };
@@ -573,8 +602,8 @@ const WashlyAPI = (() => {
               throw new Error('Berat aktual pakaian harus berupa angka positif.');
             }
             order.actualWeight = parsedWeight;
-            // Compute final cost: (actualWeight * pricePerUnit) + scentPrice
-            order.finalCost = Math.round(order.actualWeight * order.pricePerUnit) + (order.scentPrice || 0);
+            // Compute final cost purely from actualWeight * pricePerUnit
+            order.finalCost = Math.round(order.actualWeight * order.pricePerUnit);
           }
 
           // Update status if provided

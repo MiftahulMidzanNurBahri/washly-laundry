@@ -1,12 +1,11 @@
 /**
- * Washly - Navigation Controller & Demo Bar Manager
- * Handles mobile menus, active links, demo role switching, and logout
+ * Washly - Navigation Controller
+ * Handles mobile menus, active links, header profile sync, and logout
  */
 
 document.addEventListener('DOMContentLoaded', () => {
   initThemeSwitcher();
   initPageTransitions();
-  initDemoBanner();
   syncHeaderUserProfile();
   initMobileNavigation();
   highlightActiveNav();
@@ -80,76 +79,6 @@ function initPageTransitions() {
     setTimeout(() => {
       window.location.href = href;
     }, 130);
-  });
-}
-
-// --------------------------------------------------------------------------
-// Demo Banner & Persona Switcher
-// --------------------------------------------------------------------------
-function initDemoBanner() {
-  if (window.WashlyAPI && !window.WashlyAPI.isDemoMode()) {
-    document.body.classList.add('live-mode');
-    return;
-  }
-
-  const existing = document.querySelector('.demo-banner');
-  if (existing) return; // Already present in static HTML
-
-  const currentUser = window.WashlyAPI.getCurrentUser();
-  const role = currentUser ? currentUser.role : 'guest';
-  const roleName = role === 'admin' ? 'Admin Outlet' : (role === 'customer' ? 'Pelanggan' : 'Tamu');
-  const userName = currentUser ? currentUser.name : 'Belum Masuk';
-
-  // Determine relative prefix for assets and links
-  const path = window.location.pathname;
-  const isSubdir = path.includes('/customer/') || path.includes('/admin/');
-  const rootPrefix = isSubdir ? '../' : './';
-
-  const banner = document.createElement('div');
-  banner.className = 'demo-banner';
-  banner.innerHTML = `
-    <div class="demo-banner-content">
-      <span class="demo-chip">DEMO MODE</span>
-      <span>Aktif sebagai: <strong>${userName}</strong> (${roleName})</span>
-    </div>
-    <div class="demo-actions">
-      <button type="button" class="demo-btn" id="btn-switch-customer">Masuk Pelanggan</button>
-      <button type="button" class="demo-btn" id="btn-switch-admin">Masuk Admin</button>
-      <button type="button" class="demo-btn" id="btn-reset-demo" title="Kembalikan data pesanan awal">Reset Data</button>
-    </div>
-  `;
-
-  document.body.prepend(banner);
-
-  // Switch to Customer
-  document.getElementById('btn-switch-customer')?.addEventListener('click', () => {
-    const customerUser = window.WASHLY_MOCK_DATA.USERS[0];
-    window.WashlyAPI.setCurrentUser(customerUser);
-    window.WashlyApp.showToast('Beralih peran ke Pelanggan (Budi Santoso)', 'info');
-    setTimeout(() => {
-      window.location.href = rootPrefix + 'customer/dashboard.php';
-    }, 300);
-  });
-
-  // Switch to Admin
-  document.getElementById('btn-switch-admin')?.addEventListener('click', () => {
-    const adminUser = window.WASHLY_MOCK_DATA.USERS.find(u => u.role === 'admin');
-    window.WashlyAPI.setCurrentUser(adminUser);
-    window.WashlyApp.showToast('Beralih peran ke Admin (Siti Aminah)', 'info');
-    setTimeout(() => {
-      window.location.href = rootPrefix + 'admin/dashboard.php';
-    }, 300);
-  });
-
-  // Reset Demo Data
-  document.getElementById('btn-reset-demo')?.addEventListener('click', () => {
-    if (confirm('Apakah Anda yakin ingin mengembalikan data demonstrasi pesanan ke kondisi awal?')) {
-      window.WashlyAPI.orders.resetMockData();
-      window.WashlyApp.showToast('Data demo berhasil direset ke kondisi awal.', 'success');
-      setTimeout(() => {
-        window.location.reload();
-      }, 500);
-    }
   });
 }
 
@@ -290,7 +219,37 @@ function syncHeaderUserProfile() {
   if (!isProtectedArea) return;
 
   const user = window.WashlyAPI.getCurrentUser();
-  if (!user) return;
+  if (!user) {
+    // When a guest views public order tracking (customer/order-detail.php), show Login & Register buttons
+    const headerActions = document.querySelector('.app-header .header-container > .flex');
+    if (headerActions) {
+      headerActions.querySelector('.user-profile-widget')?.remove();
+      headerActions.querySelector('.btn-logout')?.remove();
+      const customerNav = document.getElementById('customer-nav');
+      if (customerNav) customerNav.style.display = 'none';
+      const mobileToggle = headerActions.querySelector('.mobile-nav-toggle');
+
+      const loginLink = document.createElement('a');
+      loginLink.href = '../login.php';
+      loginLink.className = 'btn btn-secondary btn-sm';
+      loginLink.textContent = 'Masuk';
+
+      const regLink = document.createElement('a');
+      regLink.href = '../register.php';
+      regLink.className = 'btn btn-primary btn-sm';
+      regLink.textContent = 'Daftar Akun';
+
+      if (mobileToggle) {
+        headerActions.insertBefore(loginLink, mobileToggle);
+        headerActions.insertBefore(regLink, mobileToggle);
+        mobileToggle.style.display = 'none';
+      } else {
+        headerActions.appendChild(loginLink);
+        headerActions.appendChild(regLink);
+      }
+    }
+    return;
+  }
 
   const widgets = document.querySelectorAll('.user-profile-widget');
   widgets.forEach(widget => {

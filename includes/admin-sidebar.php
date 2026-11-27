@@ -30,12 +30,6 @@ $activeNav = $activeNav ?? 'dashboard';
             <span>Manajemen Pesanan</span>
           </div>
         </a>
-
-        <a href="../customer/dashboard.php" class="admin-nav-item">
-          <div class="admin-nav-item-left">
-            <span>Lihat Portal Pelanggan</span>
-          </div>
-        </a>
       </nav>
 
       <div class="admin-sidebar-footer">

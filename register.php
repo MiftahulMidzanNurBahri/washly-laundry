@@ -1,6 +1,6 @@
 <?php
-$pageTitle = 'Pendaftaran Akun Baru Washly';
-$pageDescription = 'Daftarkan akun pelanggan Washly Laundry untuk mulai memesan laundry berkualitas, melacak cucian, dan riwayat transaksi.';
+$pageTitle = 'Daftar Akun — Washly';
+$pageDescription = 'Daftarkan akun Washly Laundry untuk mulai memesan layanan laundry, melacak cucian, dan melihat riwayat transaksi.';
 $basePrefix = '';
 $extraCss = 'auth.css';
 $pageScript = 'auth.js';
@@ -15,8 +15,8 @@ require_once __DIR__ . '/includes/head.php';
           <a href="index.php" class="auth-logo" style="margin-bottom:0;"><span>Washly</span></a>
           <?= washly_theme_toggle_button() . "\n" ?>
         </div>
-        <h1 class="auth-title">Daftar Akun Pelanggan</h1>
-        <p class="auth-desc">Nikmati layanan laundry profesional dengan transparansi penuh</p>
+        <h1 class="auth-title">Daftar Akun Baru</h1>
+        <p class="auth-desc">Buat akun Washly untuk mulai memesan layanan laundry</p>
       </div>
 
       <form id="washly-register-form" novalidate>

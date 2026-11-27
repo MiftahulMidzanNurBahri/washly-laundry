@@ -32,11 +32,9 @@ function ensureAdminSession() {
   if (user && user.role === 'admin') {
     return user;
   }
-
-  if (window.WashlyAPI.isDemoMode()) {
-    const adminUser = window.WASHLY_MOCK_DATA.USERS.find(u => u.role === 'admin');
-    window.WashlyAPI.setCurrentUser(adminUser);
-    return adminUser;
+  if (user && user.role !== 'admin') {
+    window.location.href = '../customer/dashboard.php';
+    return null;
   }
 
   window.location.href = '../login.php';
@@ -270,7 +268,10 @@ function renderAdminOrderDetailView(order) {
   document.getElementById('admin-detail-customer-name').textContent = order.customerName;
   document.getElementById('admin-detail-customer-phone').textContent = order.customerPhone || '-';
   document.getElementById('admin-detail-service').textContent = `${order.serviceName} (${window.WashlyApp.formatRupiah(order.pricePerUnit)} / ${order.unit})`;
-  document.getElementById('admin-detail-scent').textContent = `${order.scent} (${order.scentPrice > 0 ? window.WashlyApp.formatRupiah(order.scentPrice) : 'Gratis'})`;
+  const scentEl = document.getElementById('admin-detail-scent');
+  if (scentEl) scentEl.textContent = 'Mengikuti Parfum Laundry';
+  const handoverEl = document.getElementById('admin-detail-handover');
+  if (handoverEl) handoverEl.textContent = 'Penjemputan Kurir';
   document.getElementById('admin-detail-notes').textContent = order.notes || 'Tidak ada catatan pelanggan.';
   document.getElementById('admin-detail-created').textContent = window.WashlyApp.formatDateIndo(order.createdAt);
 
@@ -278,17 +279,17 @@ function renderAdminOrderDetailView(order) {
   const unitLabels = document.querySelectorAll('.service-unit-label');
   unitLabels.forEach(el => el.textContent = order.unit);
 
-  // Actual Weight Input
+  // Actual Weight Input (weighed solely by laundry staff)
   const weightInput = document.getElementById('admin-input-actual-weight');
   if (weightInput) {
-    weightInput.value = order.actualWeight !== null ? order.actualWeight : (order.estimatedWeight || '');
+    weightInput.value = order.actualWeight !== null ? order.actualWeight : '';
   }
 
   // Live Cost Recalculator
   const updateAdminCostDisplay = () => {
     const enteredWeight = parseFloat(weightInput.value) || 0;
     const subtotal = Math.round(enteredWeight * order.pricePerUnit);
-    const total = subtotal + (order.scentPrice || 0);
+    const total = subtotal;
 
     const elSubtotal = document.getElementById('admin-calc-subtotal');
     const elTotal = document.getElementById('admin-calc-total');

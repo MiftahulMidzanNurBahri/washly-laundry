@@ -12,7 +12,8 @@ const WASHLY_CONFIG = {
   STORAGE_KEYS: {
     CURRENT_USER: 'washly_current_user',
     AUTH_TOKEN: 'washly_auth_token',
-    ORDERS: 'washly_orders_store',
+    USERS: 'washly_users_store_v1',
+    ORDERS: 'washly_orders_store_v2',
     DEMO_MODE: 'washly_demo_mode_enabled',
     NOTIFICATION: 'washly_pending_toast'
   },
@@ -38,7 +39,7 @@ const WASHLY_CONFIG = {
       label: 'Menunggu Penyerahan',
       badgeClass: 'badge-status-menunggu',
       stepIndex: 1,
-      description: 'Pesanan telah dibuat. Silakan serahkan pakaian ke outlet Washly atau tunggu kurir kami.',
+      description: 'Pesanan telah dibuat. Kurir Washly akan menjemput pakaian ke alamat Anda untuk ditimbang oleh pihak laundry.',
       icon: 'inbox'
     },
     'Diproses': {
@@ -123,26 +124,13 @@ const WASHLY_CONFIG = {
       description: 'Perawatan khusus selimut tebal dan bed cover dengan mesin kapasitas besar.',
       icon: 'bed',
       popular: false
-    },
-    {
-      id: 'sepatu-tas',
-      name: 'Deep Clean Sepatu & Tas',
-      unit: 'pasang',
-      price: 30000,
-      duration: '3 Hari',
-      description: 'Pembersihan detail khusus bahan sneaker, kulit, kanvas dan suede.',
-      icon: 'tag',
-      popular: false
     }
   ],
 
-  // Scent / Fragrance Options
+  // Parfum mengikuti ketersediaan standar di laundry (tanpa biaya tambahan)
+  DEFAULT_SCENT: 'Mengikuti Parfum Laundry',
   SCENTS: [
-    { id: 'ocean-fresh', name: 'Ocean Fresh', price: 0, desc: 'Segar dan sejuk' },
-    { id: 'lavender', name: 'Lavender Blossom', price: 2000, desc: 'Aroma relaksasi mewah' },
-    { id: 'sakura', name: 'Sakura Petals', price: 2000, desc: 'Wangi lembut bunga sakura' },
-    { id: 'downy-mystique', name: 'Downy Mystique', price: 2000, desc: 'Aroma parfum tahan lama' },
-    { id: 'neutral', name: 'Tanpa Parfum', price: 0, desc: 'Hipoalergenik untuk kulit sensitif' }
+    { id: 'standar-laundry', name: 'Mengikuti Parfum Laundry', price: 0, desc: 'Mengikuti parfum yang tersedia di laundry' }
   ]
 };
 

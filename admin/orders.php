@@ -23,7 +23,6 @@ $serviceFilterOptions = [
     'setrika'      => 'Setrika Saja',
     'express'      => 'Express Wash',
     'bedcover'     => 'Bed Cover & Selimut',
-    'sepatu-tas'   => 'Sepatu & Tas',
 ];
 
 require_once __DIR__ . '/../includes/head.php';

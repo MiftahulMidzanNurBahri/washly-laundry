@@ -1,11 +1,9 @@
 <?php
 $pageTitle = 'Masuk ke Akun Washly';
-$pageDescription = 'Masuk ke portal Washly Laundry untuk memantau status cucian, riwayat pesanan, atau akses dasbor admin.';
+$pageDescription = 'Masuk ke akun Washly Laundry Anda untuk memesan layanan dan memantau status cucian.';
 $basePrefix = '';
 $extraCss = 'auth.css';
 $pageScript = 'auth.js';
-
-$initialRole = (isset($_GET['role']) && $_GET['role'] === 'admin') ? 'admin' : 'customer';
 
 require_once __DIR__ . '/includes/head.php';
 ?>
@@ -18,37 +16,10 @@ require_once __DIR__ . '/includes/head.php';
           <?= washly_theme_toggle_button() . "\n" ?>
         </div>
         <h1 class="auth-title">Selamat Datang Kembali</h1>
-        <p class="auth-desc">Masuk untuk memantau cucian atau mengelola outlet</p>
-      </div>
-
-      <!-- Demo Accounts Shortcut Box -->
-      <div class="auth-demo-accounts">
-        <div class="auth-demo-title">
-          <span>Coba Akun Demo Sekali Klik:</span>
-        </div>
-        <div class="auth-demo-buttons">
-          <button type="button" class="auth-demo-pill" id="btn-fill-customer">
-            Pelanggan (Budi)
-          </button>
-          <button type="button" class="auth-demo-pill" id="btn-fill-admin">
-            Admin (Siti Aminah)
-          </button>
-        </div>
-      </div>
-
-      <!-- Role Selector Tabs -->
-      <div class="auth-role-tabs">
-        <button type="button" class="auth-role-tab<?= $initialRole === 'customer' ? ' active' : '' ?>" data-role="customer">
-          Sebagai Pelanggan
-        </button>
-        <button type="button" class="auth-role-tab<?= $initialRole === 'admin' ? ' active' : '' ?>" data-role="admin">
-          Sebagai Admin Outlet
-        </button>
+        <p class="auth-desc">Masuk menggunakan email dan kata sandi akun Anda</p>
       </div>
 
       <form id="washly-login-form" novalidate>
-        <input type="hidden" id="login-role" value="<?= washly_e($initialRole) ?>">
-
         <div class="form-group">
           <label for="login-email" class="form-label">
             Alamat Email <span class="required">*</span>
@@ -85,7 +56,7 @@ require_once __DIR__ . '/includes/head.php';
         </div>
 
         <button type="submit" class="btn btn-primary btn-lg mt-md" style="width: 100%;">
-          Masuk ke Akun
+          Masuk
         </button>
       </form>
 

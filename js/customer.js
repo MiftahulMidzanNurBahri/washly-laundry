@@ -121,7 +121,7 @@ function renderOngoingOrderCard(order) {
         </div>
 
         <p class="text-sm text-secondary mb-md">
-          Layanan: <strong>${WashlyValidators.escapeHtml(order.serviceName)}</strong> • Pilihan Parfum: <strong>${WashlyValidators.escapeHtml(order.scent)}</strong>
+          Layanan: <strong>${WashlyValidators.escapeHtml(order.serviceName)}</strong> • Metode: <strong>Penjemputan Kurir</strong>
         </p>
 
         <!-- Stepper Indicator -->
@@ -146,9 +146,9 @@ function renderOngoingOrderCard(order) {
 
         <div class="flex items-center justify-between pt-sm flex-wrap gap-xs" style="border-top: 1px solid var(--color-border-light);">
           <div class="text-xs text-secondary">
-            ${order.actualWeight 
-              ? `Berat: <strong>${order.actualWeight} ${order.unit}</strong> | Total: <strong style="color:var(--color-primary-navy);">${window.WashlyApp.formatRupiah(order.finalCost)}</strong>` 
-              : `Estimasi: <strong>${order.estimatedWeight} ${order.unit}</strong> (Menunggu Penimbangan)`}
+            ${order.actualWeight !== null
+              ? `Berat Ditimbang: <strong>${order.actualWeight} ${order.unit}</strong> | Total: <strong style="color:var(--color-primary-navy);">${window.WashlyApp.formatRupiah(order.finalCost)}</strong>` 
+              : `Berat & Tagihan: <strong>Menunggu Penimbangan Pihak Laundry</strong>`}
           </div>
           <a href="order-detail.php?id=${encodeURIComponent(order.id)}" class="btn btn-outline-primary btn-sm">
             Lihat Detail & Lacak
@@ -166,7 +166,7 @@ function renderRecentOrdersTable(orders) {
   if (orders.length === 0) {
     tbody.innerHTML = `
       <tr>
-        <td colspan="6" class="text-center" style="padding: var(--space-xl);">
+        <td colspan="7" class="text-center" style="padding: var(--space-xl);">
           <p class="text-sm text-muted">Belum ada riwayat pesanan.</p>
         </td>
       </tr>
@@ -179,7 +179,7 @@ function renderRecentOrdersTable(orders) {
       <td><strong style="color:var(--color-primary-navy);">${WashlyValidators.escapeHtml(order.id)}</strong></td>
       <td>${WashlyValidators.escapeHtml(order.serviceName)}</td>
       <td>${window.WashlyApp.formatDateIndo(order.createdAt, false)}</td>
-      <td>${order.actualWeight ? `${order.actualWeight} ${order.unit}` : `${order.estimatedWeight} ${order.unit} (est)`}</td>
+      <td>${order.actualWeight !== null ? `${order.actualWeight} ${order.unit}` : '<span class="text-muted">Menunggu Penimbangan</span>'}</td>
       <td><strong>${window.WashlyApp.formatRupiah(order.finalCost)}</strong></td>
       <td>${window.WashlyApp.renderStatusBadge(order.status)}</td>
       <td class="text-right">
@@ -205,39 +205,13 @@ function initOrderCreationPage() {
   // Pre-fill user data
   const custNameInput = document.getElementById('order-customer-name');
   const custPhoneInput = document.getElementById('order-customer-phone');
-  if (custNameInput) custNameInput.value = user.name;
-  if (custPhoneInput) custPhoneInput.value = user.phone;
+  const custAddressInput = document.getElementById('order-customer-address');
+  if (custNameInput) custNameInput.value = user.name || '';
+  if (custPhoneInput) custPhoneInput.value = user.phone || '';
+  if (custAddressInput) custAddressInput.value = user.address || '';
 
   // Render Services Grid
   renderServicesSelection();
-
-  // Render Scents Selection
-  renderScentsSelection();
-
-  // Weight stepper buttons & input listener
-  const weightInput = document.getElementById('order-weight-estimate');
-  const btnWeightMinus = document.getElementById('btn-weight-minus');
-  const btnWeightPlus = document.getElementById('btn-weight-plus');
-
-  if (weightInput) {
-    weightInput.addEventListener('input', updateOrderCalculation);
-    if (btnWeightMinus) {
-      btnWeightMinus.addEventListener('click', () => {
-        let val = parseFloat(weightInput.value) || 1;
-        if (val > 1) {
-          weightInput.value = (val - 1).toFixed(1);
-          updateOrderCalculation();
-        }
-      });
-    }
-    if (btnWeightPlus) {
-      btnWeightPlus.addEventListener('click', () => {
-        let val = parseFloat(weightInput.value) || 1;
-        weightInput.value = (val + 1).toFixed(1);
-        updateOrderCalculation();
-      });
-    }
-  }
 
   // Form submit handler
   form.addEventListener('submit', async (e) => {
@@ -249,12 +223,18 @@ function initOrderCreationPage() {
       return;
     }
 
+    const pickupAddress = custAddressInput ? custAddressInput.value.trim() : (user.address || '');
+    if (!pickupAddress || pickupAddress.length < 5) {
+      window.WashlyApp.showToast('Silakan lengkapi alamat penjemputan kurir.', 'error');
+      if (custAddressInput) custAddressInput.focus();
+      return;
+    }
+
     const serviceId = selectedServiceEl.dataset.serviceId;
-    const selectedScentEl = document.querySelector('.scent-option.selected');
-    const scentName = selectedScentEl ? selectedScentEl.dataset.scentName : 'Ocean Fresh';
-    const estimatedWeight = parseFloat(weightInput.value) || 1.0;
-    const notes = document.getElementById('order-notes').value.trim();
-    const handoverMethod = document.querySelector('input[name="handover-method"]:checked')?.value || 'antar-sendiri';
+    const rawNotes = document.getElementById('order-notes').value.trim();
+    const combinedNotes = rawNotes
+      ? `Alamat Jemput: ${pickupAddress} | Catatan: ${rawNotes}`
+      : `Alamat Jemput: ${pickupAddress}`;
 
     const submitBtn = document.getElementById('btn-submit-order');
     submitBtn.disabled = true;
@@ -265,15 +245,14 @@ function initOrderCreationPage() {
         customerId: user.id,
         customerName: custNameInput.value.trim() || user.name,
         customerPhone: custPhoneInput.value.trim() || user.phone,
+        customerAddress: pickupAddress,
         serviceId: serviceId,
-        scent: scentName,
-        estimatedWeight: estimatedWeight,
-        notes: notes,
-        handoverMethod: handoverMethod
+        notes: combinedNotes,
+        handoverMethod: 'jemput-kurir'
       };
 
       const result = await window.WashlyAPI.orders.create(payload);
-      window.WashlyApp.showToast(`Pesanan ${result.order.id} berhasil dibuat!`, 'success');
+      window.WashlyApp.showToast(`Pesanan ${result.order.id} berhasil dibuat! Kurir akan segera menjemput.`, 'success');
 
       setTimeout(() => {
         window.location.href = `order-detail.php?id=${encodeURIComponent(result.order.id)}`;
@@ -281,7 +260,7 @@ function initOrderCreationPage() {
     } catch (err) {
       window.WashlyApp.showToast(err.message || 'Gagal membuat pesanan.', 'error');
       submitBtn.disabled = false;
-      submitBtn.textContent = 'Konfirmasi & Buat Pesanan';
+      submitBtn.textContent = 'Konfirmasi & Minta Jemput Kurir';
     }
   });
 
@@ -332,29 +311,6 @@ function renderServicesSelection() {
   }
 }
 
-function renderScentsSelection() {
-  const container = document.getElementById('scents-grid-container');
-  if (!container) return;
-
-  const scents = window.WASHLY_CONFIG.SCENTS;
-  container.innerHTML = scents.map((scent, idx) => `
-    <div class="scent-option ${idx === 0 ? 'selected' : ''}" data-scent-name="${scent.name}" data-scent-price="${scent.price}">
-      <div>${WashlyValidators.escapeHtml(scent.name)}</div>
-      <div class="text-xs text-muted" style="margin-top:2px;">
-        ${scent.price > 0 ? `+${window.WashlyApp.formatRupiah(scent.price)}` : 'Gratis'}
-      </div>
-    </div>
-  `).join('');
-
-  container.querySelectorAll('.scent-option').forEach(opt => {
-    opt.addEventListener('click', () => {
-      container.querySelectorAll('.scent-option').forEach(o => o.classList.remove('selected'));
-      opt.classList.add('selected');
-      updateOrderCalculation();
-    });
-  });
-}
-
 function updateOrderCalculation() {
   const selectedCard = document.querySelector('.service-card.selected');
   if (!selectedCard) return;
@@ -363,34 +319,14 @@ function updateOrderCalculation() {
   const unit = selectedCard.dataset.unit;
   const serviceName = selectedCard.querySelector('.service-name').textContent;
 
-  const selectedScent = document.querySelector('.scent-option.selected');
-  const scentName = selectedScent ? selectedScent.dataset.scentName : 'Ocean Fresh';
-  const scentPrice = selectedScent ? parseInt(selectedScent.dataset.scentPrice, 10) : 0;
-
-  const weightInput = document.getElementById('order-weight-estimate');
-  const weight = parseFloat(weightInput ? weightInput.value : 1.0) || 1.0;
-
-  const subtotalService = pricePerUnit * weight;
-  const totalEstimated = subtotalService + scentPrice;
-
   // Update Summary UI elements
   const elSvcName = document.getElementById('summary-service-name');
   const elSvcRate = document.getElementById('summary-service-rate');
-  const elSvcScent = document.getElementById('summary-scent-name');
-  const elScentPrice = document.getElementById('summary-scent-price');
-  const elEstWeight = document.getElementById('summary-estimated-weight');
-  const elEstSubtotal = document.getElementById('summary-service-subtotal');
-  const elEstTotal = document.getElementById('summary-total-estimate');
 
   if (elSvcName) elSvcName.textContent = serviceName;
-  if (elSvcRate) elSvcRate.textContent = `${window.WashlyApp.formatRupiah(pricePerUnit)} / ${unit}`;
-  if (elSvcScent) elSvcScent.textContent = scentName;
-  if (elScentPrice) elScentPrice.textContent = scentPrice > 0 ? window.WashlyApp.formatRupiah(scentPrice) : 'Gratis';
-  if (elEstWeight) elEstWeight.textContent = `${weight} ${unit}`;
-  if (elEstSubtotal) elEstSubtotal.textContent = window.WashlyApp.formatRupiah(subtotalService);
-  if (elEstTotal) {
-    elEstTotal.textContent = window.WashlyApp.formatRupiah(totalEstimated);
-    window.WashlyApp.highlightUpdate(elEstTotal);
+  if (elSvcRate) {
+    elSvcRate.textContent = `${window.WashlyApp.formatRupiah(pricePerUnit)} / ${unit}`;
+    window.WashlyApp.highlightUpdate(elSvcRate);
   }
 }
 
@@ -469,20 +405,20 @@ function renderOrderDetailView(order) {
     if (order.actualWeight === null) {
       weightBox.innerHTML = `
         <div class="order-notice mb-md" style="background:var(--color-warning-bg); border-color:var(--color-warning-border); color:var(--color-warning);">
-          <strong>Pakaian Menunggu Penimbangan</strong><br>
-          Petugas outlet Washly akan menimbang cucian Anda saat pakaian diserahkan. Setelah ditimbang, berat riil dan total biaya pasti akan otomatis tampil di sini.
+          <strong>Pakaian Menunggu Penimbangan Laundry</strong><br>
+          Pihak laundry Washly akan menimbang cucian Anda setelah pakaian dijemput oleh kurir. Berat riil dan total biaya pasti akan otomatis tampil di sini.
         </div>
         <div class="summary-row">
-          <span>Estimasi Berat Pelanggan:</span>
-          <strong>${order.estimatedWeight} ${order.unit}</strong>
+          <span>Berat Pakaian:</span>
+          <strong class="text-muted">Belum Ditimbang</strong>
         </div>
         <div class="summary-row">
           <span>Tarif Layanan:</span>
           <strong>${window.WashlyApp.formatRupiah(order.pricePerUnit)} / ${order.unit}</strong>
         </div>
         <div class="summary-row">
-          <span>Pilihan Parfum:</span>
-          <strong>${WashlyValidators.escapeHtml(order.scent)} (${order.scentPrice > 0 ? window.WashlyApp.formatRupiah(order.scentPrice) : 'Gratis'})</strong>
+          <span>Parfum:</span>
+          <strong>Sesuai Parfum Laundry</strong>
         </div>
         <div class="summary-total">
           <span class="summary-total-label">Total Tagihan:</span>
@@ -501,8 +437,8 @@ function renderOrderDetailView(order) {
           <strong>${window.WashlyApp.formatRupiah(subtotalWeight)}</strong>
         </div>
         <div class="summary-row">
-          <span>Parfum Eksklusif (${WashlyValidators.escapeHtml(order.scent)}):</span>
-          <strong>${order.scentPrice > 0 ? window.WashlyApp.formatRupiah(order.scentPrice) : 'Gratis'}</strong>
+          <span>Parfum:</span>
+          <strong>Sesuai Parfum Laundry</strong>
         </div>
         <div class="summary-total">
           <span class="summary-total-label">Total Tagihan Final:</span>
@@ -516,7 +452,7 @@ function renderOrderDetailView(order) {
   document.getElementById('detail-service-name').textContent = order.serviceName;
   document.getElementById('detail-customer-name').textContent = order.customerName;
   document.getElementById('detail-customer-phone').textContent = order.customerPhone || '-';
-  document.getElementById('detail-handover-method').textContent = order.handoverMethod === 'antar-sendiri' ? 'Antar Sendiri ke Outlet' : 'Minta Penjemputan Kurir';
+  document.getElementById('detail-handover-method').textContent = 'Penjemputan Kurir ke Alamat Pelanggan';
   document.getElementById('detail-order-notes').textContent = order.notes || 'Tidak ada catatan khusus.';
 
   // Timeline Activity List
@@ -614,8 +550,7 @@ async function initCustomerHistoryPage() {
         <td><strong style="color:var(--color-primary-navy);">${WashlyValidators.escapeHtml(order.id)}</strong></td>
         <td>${window.WashlyApp.formatDateIndo(order.createdAt, false)}</td>
         <td>${WashlyValidators.escapeHtml(order.serviceName)}</td>
-        <td>${WashlyValidators.escapeHtml(order.scent)}</td>
-        <td>${order.actualWeight ? `${order.actualWeight} ${order.unit}` : `${order.estimatedWeight} ${order.unit} (est)`}</td>
+        <td>${order.actualWeight !== null ? `${order.actualWeight} ${order.unit}` : '<span class="text-muted">Menunggu Penimbangan</span>'}</td>
         <td><strong>${window.WashlyApp.formatRupiah(order.finalCost)}</strong></td>
         <td>${window.WashlyApp.renderStatusBadge(order.status)}</td>
         <td class="text-right">

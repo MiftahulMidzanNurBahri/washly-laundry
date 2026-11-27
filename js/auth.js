@@ -6,7 +6,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initPasswordToggles();
   initLoginForm();
   initRegisterForm();
-  initDemoAccountShortcuts();
 });
 
 // Password visibility toggles
@@ -28,24 +27,11 @@ function initLoginForm() {
   const form = document.getElementById('washly-login-form');
   if (!form) return;
 
-  const roleTabs = document.querySelectorAll('.auth-role-tab');
-  const roleInput = document.getElementById('login-role');
-
-  roleTabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      roleTabs.forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      const selectedRole = tab.dataset.role;
-      if (roleInput) roleInput.value = selectedRole;
-    });
-  });
-
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const emailInput = document.getElementById('login-email');
     const passwordInput = document.getElementById('login-password');
-    const role = roleInput ? roleInput.value : 'customer';
 
     const email = emailInput.value.trim();
     const password = passwordInput.value;
@@ -76,7 +62,7 @@ function initLoginForm() {
     submitBtn.textContent = 'Memverifikasi...';
 
     try {
-      const result = await window.WashlyAPI.auth.login({ email, password, role });
+      const result = await window.WashlyAPI.auth.login({ email, password });
       window.WashlyApp.showToast(`Selamat datang kembali, ${result.user.name}!`, 'success');
 
       setTimeout(() => {
@@ -87,7 +73,7 @@ function initLoginForm() {
         }
       }, 500);
     } catch (err) {
-      window.WashlyApp.showToast(err.message || 'Login gagal. Periksa email dan password.', 'error');
+      window.WashlyApp.showToast(err.message || 'Login gagal. Periksa email dan kata sandi.', 'error');
       submitBtn.disabled = false;
       submitBtn.textContent = originalText;
     }
@@ -173,36 +159,6 @@ function initRegisterForm() {
       submitBtn.textContent = originalText;
     }
   });
-}
-
-// Demo Account Auto-Fill buttons
-function initDemoAccountShortcuts() {
-  const demoBox = document.querySelector('.auth-demo-accounts');
-  if (demoBox && window.WashlyAPI && !window.WashlyAPI.isDemoMode()) {
-    demoBox.style.display = 'none';
-    return;
-  }
-
-  const btnCustomer = document.getElementById('btn-fill-customer');
-  const btnAdmin = document.getElementById('btn-fill-admin');
-
-  if (btnCustomer) {
-    btnCustomer.addEventListener('click', () => {
-      document.getElementById('login-email').value = 'budi@example.com';
-      document.getElementById('login-password').value = 'password123';
-      const roleCustomerTab = document.querySelector('.auth-role-tab[data-role="customer"]');
-      if (roleCustomerTab) roleCustomerTab.click();
-    });
-  }
-
-  if (btnAdmin) {
-    btnAdmin.addEventListener('click', () => {
-      document.getElementById('login-email').value = 'admin@washly.id';
-      document.getElementById('login-password').value = 'admin123';
-      const roleAdminTab = document.querySelector('.auth-role-tab[data-role="admin"]');
-      if (roleAdminTab) roleAdminTab.click();
-    });
-  }
 }
 
 function showInputError(inputEl, message) {
