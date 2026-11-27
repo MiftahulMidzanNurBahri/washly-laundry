@@ -1,105 +1,34 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Proses & Timbang Pesanan — Admin Washly</title>
-  <script>
-    (function() {
-      try {
-        var theme = localStorage.getItem('washly_theme');
-        if (theme === 'dark') {
-          document.documentElement.setAttribute('data-theme', 'dark');
-        } else {
-          document.documentElement.setAttribute('data-theme', 'light');
-        }
-      } catch (e) {}
-    })();
-  </script>
-  <meta name="description" content="Antarmuka penimbangan pakaian, kalkulasi biaya riil, dan pembaruan tahapan status pesanan Washly.">
+<?php
+$requestedOrderId = isset($_GET['id']) ? trim((string) $_GET['id']) : '';
+$pageTitle = ($requestedOrderId !== '' ? "Proses {$requestedOrderId} — " : '') . 'Proses & Timbang Pesanan — Admin Washly';
+$pageDescription = 'Antarmuka penimbangan pakaian, kalkulasi biaya riil, dan pembaruan tahapan status pesanan Washly.';
+$basePrefix = '../';
+$extraCss = 'admin.css';
+$pageScript = 'admin.js';
+$activeNav = 'orders';
+$topbarTitle = 'Pemrosesan Pesanan & Penimbangan';
+$topbarSubtitle = 'SOP Penetapan Berat Riil & Pembaruan Status';
 
-  <link rel="stylesheet" href="../css/reset.css">
-  <link rel="stylesheet" href="../css/global.css">
-  <link rel="stylesheet" href="../css/components.css">
-  <link rel="stylesheet" href="../css/admin.css">
-  <link rel="stylesheet" href="../css/responsive.css">
-</head>
-<body>
+require_once __DIR__ . '/../includes/head.php';
+?>
 
   <div class="admin-layout">
-    
-    <!-- Sidebar Navigation -->
-    <aside class="admin-sidebar" id="admin-sidebar" aria-hidden="true" inert>
-      <div class="admin-sidebar-header">
-        <a href="dashboard.html" class="brand-logo" style="color: #FFFFFF;">
-          <span>Washly</span>
-        </a>
-        <span class="badge badge-role" style="font-size:10px; background:rgba(255,255,255,0.15); color:#B9ACDA; border:none;">ADMIN</span>
-      </div>
 
-      <nav class="admin-sidebar-nav">
-        <a href="dashboard.html" class="admin-nav-item">
-          <div class="admin-nav-item-left">
-            <span>Dashboard</span>
-          </div>
-        </a>
-
-        <a href="orders.html" class="admin-nav-item active">
-          <div class="admin-nav-item-left">
-            <span>Manajemen Pesanan</span>
-          </div>
-        </a>
-
-        <a href="../customer/dashboard.html" class="admin-nav-item">
-          <div class="admin-nav-item-left">
-            <span>Lihat Portal Pelanggan</span>
-          </div>
-        </a>
-      </nav>
-
-      <div class="admin-sidebar-footer">
-        <button type="button" class="btn btn-secondary btn-sm btn-logout" style="width: 100%; justify-content:center; background:rgba(255,255,255,0.08); color:#FFFFFF; border-color:rgba(255,255,255,0.12);">
-          Keluar Sesi Admin
-        </button>
-      </div>
-    </aside>
+<?php require_once __DIR__ . '/../includes/admin-sidebar.php'; ?>
 
     <!-- Main Shell -->
     <div class="admin-main">
-      
-      <!-- Top Bar -->
-      <header class="admin-topbar">
-        <div class="flex items-center gap-sm">
-          <button type="button" class="admin-mobile-toggle" aria-label="Open navigation menu" aria-expanded="false" aria-controls="admin-sidebar">
-            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-              <path d="M4 6h16M4 12h16M4 18h16"></path>
-            </svg>
-          </button>
-          <div>
-            <h3 style="font-size: var(--font-size-base); margin:0;">Pemrosesan Pesanan & Penimbangan</h3>
-            <span class="text-xs text-muted">SOP Penetapan Berat Riil & Pembaruan Status</span>
-          </div>
-        </div>
 
-        <div class="flex items-center gap-md">
-          <div class="user-profile-widget">
-            <div class="user-avatar" style="background:var(--color-electric-blue);">WA</div>
-            <div class="user-info">
-              <span class="user-name">Siti Aminah</span>
-              <span class="user-role-label">Petugas & Penimbang</span>
-            </div>
-          </div>
-        </div>
-      </header>
+<?php require_once __DIR__ . '/../includes/admin-topbar.php'; ?>
 
       <!-- Main Content -->
       <main class="admin-content">
-        
+
         <div class="mb-lg">
-          <a href="orders.html" class="text-xs text-link font-semibold mb-xs" style="display:inline-block;">← Kembali ke Daftar Pesanan</a>
+          <a href="orders.php" class="text-xs text-link font-semibold mb-xs" style="display:inline-block;">← Kembali ke Daftar Pesanan</a>
           <div class="flex items-center justify-between flex-wrap gap-sm">
             <div class="flex items-center gap-sm">
-              <h2 id="admin-detail-order-id">Memuat...</h2>
+              <h2 id="admin-detail-order-id"><?= $requestedOrderId !== '' ? washly_e($requestedOrderId) : 'Memuat...' ?></h2>
               <div id="admin-detail-status-badge"></div>
             </div>
           </div>
@@ -107,10 +36,10 @@
 
         <!-- 2 Column Processing Layout -->
         <div class="admin-processing-layout">
-          
+
           <!-- Left Column: Order Data & Activity History -->
           <div>
-            
+
             <div class="card mb-lg">
               <div class="card-header">
                 <h3 class="card-title">Rincian Informasi Pesanan</h3>
@@ -151,7 +80,7 @@
             <!-- Activity History Log -->
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">Riwayat Log Status & Audit</h3>
+                <h3 class="card-title">Riwayat Log Status &amp; Audit</h3>
               </div>
               <div class="card-body">
                 <div class="timeline" id="admin-timeline-history">
@@ -167,14 +96,14 @@
             <div class="card" style="box-shadow: var(--shadow-lg); border-color: var(--color-border);">
               <div class="card-header" style="background:var(--color-surface-hover);">
                 <div>
-                  <h3 class="card-title">Penimbangan & Transisi Status</h3>
+                  <h3 class="card-title">Penimbangan &amp; Transisi Status</h3>
                   <p class="card-subtitle">Wajib isi berat aktual pakaian saat serah terima di outlet</p>
                 </div>
               </div>
-              
+
               <div class="card-body">
                 <form id="admin-processing-form">
-                  
+
                   <!-- Weight Input Field -->
                   <div class="form-group mb-md">
                     <label for="admin-input-actual-weight" class="form-label">
@@ -182,13 +111,13 @@
                     </label>
                     <div class="weight-input-box highlight">
                       <div class="weight-display-group">
-                        <input 
-                          type="number" 
-                          id="admin-input-actual-weight" 
-                          step="0.1" 
-                          min="0.1" 
-                          max="200" 
-                          placeholder="0.0" 
+                        <input
+                          type="number"
+                          id="admin-input-actual-weight"
+                          step="0.1"
+                          min="0.1"
+                          max="200"
+                          placeholder="0.0"
                           required
                         >
                         <span class="weight-unit service-unit-label">kg</span>
@@ -225,16 +154,16 @@
                     <label for="admin-processing-notes" class="form-label">
                       Catatan Petugas (Opsional)
                     </label>
-                    <textarea 
-                      id="admin-processing-notes" 
-                      class="form-textarea" 
-                      rows="2" 
+                    <textarea
+                      id="admin-processing-notes"
+                      class="form-textarea"
+                      rows="2"
                       placeholder="Contoh: Ada 1 kemeja bernoda kopi di kerah, luntur dicek aman."
                     ></textarea>
                   </div>
 
                   <button type="submit" id="btn-save-admin-processing" class="btn btn-primary btn-lg" style="width: 100%;">
-                    Simpan & Perbarui Status
+                    Simpan &amp; Perbarui Status
                   </button>
 
                 </form>
@@ -250,13 +179,4 @@
 
   </div>
 
-  <!-- Scripts -->
-  <script src="../js/config.js"></script>
-  <script src="../js/mock-data.js"></script>
-  <script src="../js/validators.js"></script>
-  <script src="../js/api.js"></script>
-  <script src="../js/app.js"></script>
-  <script src="../js/navigation.js"></script>
-  <script src="../js/admin.js"></script>
-</body>
-</html>
+<?php require_once __DIR__ . '/../includes/scripts.php'; ?>
