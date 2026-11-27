@@ -8,17 +8,174 @@ const WashlyAPI = (() => {
   const CONFIG = window.WASHLY_CONFIG;
   const SEED = window.WASHLY_MOCK_DATA;
 
-  // Proposed backend base URL (when PHP backend is integrated)
-  const BACKEND_BASE_URL = '/backend/api';
+  // Resolve backend base URL dynamically so subfolders in XAMPP/Laragon (e.g. /washly-laundry/) work without 404
+  function getBackendBaseUrl() {
+    if (CONFIG.BACKEND && CONFIG.BACKEND.API_BASE_URL) {
+      return CONFIG.BACKEND.API_BASE_URL.replace(/\/+$/, '');
+    }
+    const path = typeof window !== 'undefined' ? window.location.pathname : '';
+    const isSubdir = /\/(customer|admin)\//.test(path);
+    return isSubdir ? '../backend/api' : './backend/api';
+  }
 
   // State initialization
   function isDemoMode() {
     const stored = localStorage.getItem(CONFIG.STORAGE_KEYS.DEMO_MODE);
-    return stored === null ? true : stored === 'true';
+    if (stored !== null) {
+      return stored === 'true';
+    }
+    return CONFIG.BACKEND ? CONFIG.BACKEND.DEFAULT_DEMO_MODE !== false : true;
   }
 
   function setDemoMode(enabled) {
     localStorage.setItem(CONFIG.STORAGE_KEYS.DEMO_MODE, enabled ? 'true' : 'false');
+  }
+
+  // Auth token helper (optional JWT / session token support alongside PHP session cookies)
+  function getAuthToken() {
+    try {
+      return sessionStorage.getItem(CONFIG.STORAGE_KEYS.AUTH_TOKEN) || null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function setAuthToken(token) {
+    try {
+      if (!token) {
+        sessionStorage.removeItem(CONFIG.STORAGE_KEYS.AUTH_TOKEN);
+      } else {
+        sessionStorage.setItem(CONFIG.STORAGE_KEYS.AUTH_TOKEN, String(token));
+      }
+    } catch (e) {}
+  }
+
+  // Data normalizers (accept both camelCase from API_CONTRACT.md and snake_case from MySQL rows)
+  function normalizeUser(raw) {
+    if (!raw || typeof raw !== 'object') return null;
+    const name = String(raw.name || raw.full_name || 'Pengguna').trim();
+    const avatar = raw.avatarText || raw.avatar_text || (name ? name.substring(0, 2).toUpperCase() : 'U');
+    return {
+      id: String(raw.id ?? raw.user_id ?? ''),
+      name: name,
+      email: String(raw.email ?? ''),
+      phone: String(raw.phone ?? raw.phone_number ?? ''),
+      address: String(raw.address ?? ''),
+      role: raw.role === 'admin' ? 'admin' : 'customer',
+      avatarText: avatar
+    };
+  }
+
+  function normalizeService(raw) {
+    if (!raw || typeof raw !== 'object') return raw;
+    return {
+      id: String(raw.id ?? raw.service_id ?? ''),
+      name: String(raw.name ?? raw.service_name ?? ''),
+      unit: String(raw.unit ?? 'kg'),
+      price: Number(raw.price ?? raw.price_per_unit ?? 0),
+      duration: String(raw.duration ?? '-'),
+      description: String(raw.description ?? ''),
+      icon: raw.icon || 'washer',
+      popular: Boolean(raw.popular)
+    };
+  }
+
+  function normalizeOrder(raw) {
+    if (!raw || typeof raw !== 'object') return raw;
+    const serviceId = String(raw.serviceId ?? raw.service_id ?? '');
+    const fallbackSvc = CONFIG.SERVICES.find(s => s.id === serviceId);
+    const rawActual = raw.actualWeight !== undefined ? raw.actualWeight : raw.actual_weight;
+    const rawFinal = raw.finalCost !== undefined ? raw.finalCost : raw.final_cost;
+
+    return {
+      ...raw,
+      id: String(raw.id ?? raw.order_id ?? raw.order_code ?? ''),
+      customerId: String(raw.customerId ?? raw.customer_id ?? ''),
+      customerName: String(raw.customerName ?? raw.customer_name ?? '-'),
+      customerPhone: String(raw.customerPhone ?? raw.customer_phone ?? ''),
+      serviceId: serviceId,
+      serviceName: String(raw.serviceName ?? raw.service_name ?? (fallbackSvc ? fallbackSvc.name : '-')),
+      unit: String(raw.unit ?? (fallbackSvc ? fallbackSvc.unit : 'kg')),
+      pricePerUnit: Number(raw.pricePerUnit ?? raw.price_per_unit ?? (fallbackSvc ? fallbackSvc.price : 0)),
+      scent: String(raw.scent ?? 'Ocean Fresh'),
+      scentPrice: Number(raw.scentPrice ?? raw.scent_price ?? 0),
+      estimatedWeight: Number(raw.estimatedWeight ?? raw.estimated_weight ?? 1),
+      actualWeight: (rawActual === null || rawActual === undefined || rawActual === '') ? null : Number(rawActual),
+      finalCost: (rawFinal === null || rawFinal === undefined || rawFinal === '') ? null : Number(rawFinal),
+      notes: String(raw.notes ?? ''),
+      handoverMethod: String(raw.handoverMethod ?? raw.handover_method ?? 'antar-sendiri'),
+      status: String(raw.status ?? CONFIG.STATUS.MENUNGGU),
+      createdAt: String(raw.createdAt ?? raw.created_at ?? ''),
+      timeline: Array.isArray(raw.timeline)
+        ? raw.timeline.map(item => ({
+            status: String(item.status ?? ''),
+            timestamp: String(item.timestamp ?? item.created_at ?? ''),
+            note: String(item.note ?? item.notes ?? '')
+          }))
+        : []
+    };
+  }
+
+  function normalizeMetrics(raw) {
+    if (!raw || typeof raw !== 'object') {
+      return { total: 0, menunggu: 0, diproses: 0, siap: 0, diambil: 0, revenueToday: 0 };
+    }
+    return {
+      total: Number(raw.total ?? raw.total_orders ?? 0),
+      menunggu: Number(raw.menunggu ?? raw.menunggu_penyerahan ?? 0),
+      diproses: Number(raw.diproses ?? 0),
+      siap: Number(raw.siap ?? raw.siap_diambil ?? 0),
+      diambil: Number(raw.diambil ?? 0),
+      revenueToday: Number(raw.revenueToday ?? raw.revenue_today ?? 0)
+    };
+  }
+
+  // Centralized HTTP Fetch helper for PHP/MySQL REST API
+  async function apiRequest(endpoint, options = {}) {
+    const url = `${getBackendBaseUrl()}${endpoint}`;
+    const headers = {
+      'Accept': 'application/json',
+      ...(options.body ? { 'Content-Type': 'application/json' } : {}),
+      ...(options.headers || {})
+    };
+
+    const token = getAuthToken();
+    if (token && !headers['Authorization']) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    let res;
+    try {
+      res = await fetch(url, {
+        ...options,
+        headers,
+        credentials: options.credentials || 'include' // Ensures PHP $_SESSION cookies are sent
+      });
+    } catch (networkErr) {
+      throw new Error('Tidak dapat terhubung ke server Backend PHP. Pastikan Apache & MySQL (XAMPP/Laragon) sedang aktif.');
+    }
+
+    const rawText = await res.text();
+    let json = null;
+    if (rawText) {
+      try {
+        json = JSON.parse(rawText);
+      } catch (parseErr) {
+        throw new Error(`Respons server PHP bukan JSON yang valid (HTTP ${res.status}). Periksa error pada file ${endpoint}.`);
+      }
+    }
+
+    if (!res.ok || (json && json.success === false)) {
+      if (res.status === 401 && !endpoint.includes('/auth/login.php')) {
+        sessionStorage.removeItem(CONFIG.STORAGE_KEYS.CURRENT_USER);
+        setAuthToken(null);
+      }
+      const message = (json && json.message) ? json.message : `Permintaan ke server gagal (HTTP ${res.status}).`;
+      throw new Error(message);
+    }
+
+    // Unwrap standard API_CONTRACT.md envelope { success, message, data } or return raw JSON
+    return (json && json.data !== undefined) ? json.data : json;
   }
 
   // Local storage orders helper
@@ -46,12 +203,15 @@ const WashlyAPI = (() => {
     try {
       const data = sessionStorage.getItem(CONFIG.STORAGE_KEYS.CURRENT_USER);
       if (data) return JSON.parse(data);
-      // Default to customer Budi Santoso in demo mode for instant evaluation
-      const defaultUser = SEED.USERS[0];
-      sessionStorage.setItem(CONFIG.STORAGE_KEYS.CURRENT_USER, JSON.stringify(defaultUser));
-      return defaultUser;
+      // Only auto-seed default user when Demo Mode is enabled
+      if (isDemoMode()) {
+        const defaultUser = SEED.USERS[0];
+        sessionStorage.setItem(CONFIG.STORAGE_KEYS.CURRENT_USER, JSON.stringify(defaultUser));
+        return defaultUser;
+      }
+      return null;
     } catch (e) {
-      return SEED.USERS[0];
+      return isDemoMode() ? SEED.USERS[0] : null;
     }
   }
 
@@ -59,16 +219,7 @@ const WashlyAPI = (() => {
     if (!user) {
       sessionStorage.removeItem(CONFIG.STORAGE_KEYS.CURRENT_USER);
     } else {
-      // Ensure no password field is stored in browser storage
-      const safeUser = {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        phone: user.phone,
-        address: user.address,
-        role: user.role,
-        avatarText: user.avatarText || (user.name ? user.name.substring(0, 2).toUpperCase() : 'U')
-      };
+      const safeUser = normalizeUser(user);
       sessionStorage.setItem(CONFIG.STORAGE_KEYS.CURRENT_USER, JSON.stringify(safeUser));
     }
   }
@@ -81,8 +232,11 @@ const WashlyAPI = (() => {
   return {
     isDemoMode,
     setDemoMode,
+    getBackendBaseUrl,
     getCurrentUser,
     setCurrentUser,
+    getAuthToken,
+    setAuthToken,
 
     // ------------------------------------------------------------------------
     // Authentication Endpoints
@@ -118,21 +272,29 @@ const WashlyAPI = (() => {
           setCurrentUser(user);
           return { success: true, user, isDemo: true };
         } else {
-          // Future PHP Endpoint: POST /backend/api/auth/login.php
-          try {
-            const res = await fetch(`${BACKEND_BASE_URL}/auth/login.php`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ email, password, role })
-            });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.message || 'Login gagal.');
-            setCurrentUser(data.user);
-            return { success: true, user: data.user, isDemo: false };
-          } catch (err) {
-            console.error('API Error, falling back to demo mode:', err);
-            throw new Error(`Koneksi Backend PHP gagal: ${err.message}. Pastikan server PHP aktif.`);
+          // PHP Endpoint: POST /backend/api/auth/login.php
+          const payload = await apiRequest('/auth/login.php', {
+            method: 'POST',
+            body: JSON.stringify({ email, password, role })
+          });
+
+          if (payload && payload.token) {
+            setAuthToken(payload.token);
           }
+
+          const rawUser = (payload && payload.user) ? payload.user : payload;
+          const user = normalizeUser(rawUser);
+          if (!user || !user.email) {
+            throw new Error('Data pengguna dari server tidak lengkap.');
+          }
+
+          if (role && user.role !== role) {
+            setAuthToken(null);
+            throw new Error(`Akun ini terdaftar sebagai ${user.role}, bukan ${role}.`);
+          }
+
+          setCurrentUser(user);
+          return { success: true, user, isDemo: false };
         }
       },
 
@@ -152,22 +314,84 @@ const WashlyAPI = (() => {
           setCurrentUser(newUser);
           return { success: true, user: newUser, isDemo: true };
         } else {
-          // Future PHP Endpoint: POST /backend/api/auth/register.php
-          const res = await fetch(`${BACKEND_BASE_URL}/auth/register.php`, {
+          // PHP Endpoint: POST /backend/api/auth/register.php
+          const resData = await apiRequest('/auth/register.php', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
           });
-          const data = await res.json();
-          if (!res.ok) throw new Error(data.message || 'Registrasi gagal.');
-          setCurrentUser(data.user);
-          return { success: true, user: data.user, isDemo: false };
+
+          if (resData && resData.token) {
+            setAuthToken(resData.token);
+          }
+
+          const rawUser = (resData && resData.user) ? resData.user : {
+            ...payload,
+            ...(resData || {}),
+            role: 'customer'
+          };
+          const user = normalizeUser(rawUser);
+          setCurrentUser(user);
+          return { success: true, user, isDemo: false };
         }
       },
 
-      logout() {
+      async logout() {
         sessionStorage.removeItem(CONFIG.STORAGE_KEYS.CURRENT_USER);
+        setAuthToken(null);
+
+        if (!isDemoMode()) {
+          // Optional PHP Endpoint: POST /backend/api/auth/logout.php (destroy PHP session)
+          try {
+            await fetch(`${getBackendBaseUrl()}/auth/logout.php`, {
+              method: 'POST',
+              credentials: 'include'
+            });
+          } catch (e) {
+            // Safe to ignore if logout.php is not implemented yet
+          }
+        }
         return { success: true };
+      }
+    },
+
+    // ------------------------------------------------------------------------
+    // Users / Customer Profile Endpoints
+    // ------------------------------------------------------------------------
+    users: {
+      async updateProfile(payload) {
+        const current = getCurrentUser() || {};
+
+        if (isDemoMode()) {
+          await simulateLatency(200);
+          const updatedUser = normalizeUser({
+            ...current,
+            name: payload.name,
+            phone: payload.phone,
+            address: payload.address
+          });
+          setCurrentUser(updatedUser);
+          return { success: true, user: updatedUser, isDemo: true };
+        }
+
+        // PHP Endpoint: POST /backend/api/users/update-profile.php
+        const resData = await apiRequest('/users/update-profile.php', {
+          method: 'POST',
+          body: JSON.stringify({
+            id: payload.id || current.id,
+            name: payload.name,
+            phone: payload.phone,
+            address: payload.address
+          })
+        });
+
+        const rawUser = (resData && resData.user) ? resData.user : {
+          ...current,
+          ...payload,
+          ...(resData || {})
+        };
+        const updatedUser = normalizeUser(rawUser);
+        setCurrentUser(updatedUser);
+        return { success: true, user: updatedUser, isDemo: false };
       }
     },
 
@@ -179,10 +403,10 @@ const WashlyAPI = (() => {
         if (isDemoMode()) {
           return CONFIG.SERVICES;
         }
-        // Future PHP Endpoint: GET /backend/api/services/list.php
-        const res = await fetch(`${BACKEND_BASE_URL}/services/list.php`);
-        if (!res.ok) throw new Error('Gagal memuat katalog layanan');
-        return await res.json();
+        // PHP Endpoint: GET /backend/api/services/list.php
+        const resData = await apiRequest('/services/list.php');
+        const list = Array.isArray(resData) ? resData : (resData && Array.isArray(resData.services) ? resData.services : null);
+        return list ? list.map(normalizeService) : CONFIG.SERVICES;
       },
 
       getById(serviceId) {
@@ -201,10 +425,11 @@ const WashlyAPI = (() => {
           if (!customerId) return orders;
           return orders.filter(o => o.customerId === customerId);
         }
-        // Future PHP Endpoint: GET /backend/api/orders/customer.php?customer_id=...
-        const res = await fetch(`${BACKEND_BASE_URL}/orders/customer.php?customer_id=${encodeURIComponent(customerId)}`);
-        if (!res.ok) throw new Error('Gagal memuat daftar pesanan pelanggan');
-        return await res.json();
+        // PHP Endpoint: GET /backend/api/orders/customer.php?customer_id=...
+        const query = customerId ? `?customer_id=${encodeURIComponent(customerId)}` : '';
+        const resData = await apiRequest(`/orders/customer.php${query}`);
+        const list = Array.isArray(resData) ? resData : (resData && Array.isArray(resData.orders) ? resData.orders : []);
+        return list.map(normalizeOrder);
       },
 
       async listAdminOrders(filters = {}) {
@@ -234,11 +459,22 @@ const WashlyAPI = (() => {
           return orders;
         }
 
-        // Future PHP Endpoint: GET /backend/api/orders/admin.php?...
-        const params = new URLSearchParams(filters);
-        const res = await fetch(`${BACKEND_BASE_URL}/orders/admin.php?${params.toString()}`);
-        if (!res.ok) throw new Error('Gagal memuat daftar pesanan admin');
-        return await res.json();
+        // PHP Endpoint: GET /backend/api/orders/admin.php?search=...&status=...&serviceId=...
+        const cleanParams = new URLSearchParams();
+        if (filters.search && filters.search.trim()) {
+          cleanParams.set('search', filters.search.trim());
+        }
+        if (filters.status && filters.status !== 'Semua') {
+          cleanParams.set('status', filters.status);
+        }
+        if (filters.serviceId && filters.serviceId !== 'Semua') {
+          cleanParams.set('serviceId', filters.serviceId);
+        }
+
+        const qs = cleanParams.toString();
+        const resData = await apiRequest(`/orders/admin.php${qs ? `?${qs}` : ''}`);
+        const list = Array.isArray(resData) ? resData : (resData && Array.isArray(resData.orders) ? resData.orders : []);
+        return list.map(normalizeOrder);
       },
 
       async getById(orderId) {
@@ -250,10 +486,13 @@ const WashlyAPI = (() => {
           return found;
         }
 
-        // Future PHP Endpoint: GET /backend/api/orders/detail.php?id=...
-        const res = await fetch(`${BACKEND_BASE_URL}/orders/detail.php?id=${encodeURIComponent(orderId)}`);
-        if (!res.ok) throw new Error('Pesanan tidak ditemukan di backend');
-        return await res.json();
+        // PHP Endpoint: GET /backend/api/orders/detail.php?id=...
+        const resData = await apiRequest(`/orders/detail.php?id=${encodeURIComponent(orderId)}`);
+        const rawOrder = (resData && resData.order) ? resData.order : resData;
+        if (!rawOrder || (!rawOrder.id && !rawOrder.order_id && !rawOrder.order_code)) {
+          throw new Error(`Pesanan dengan ID ${orderId} tidak ditemukan.`);
+        }
+        return normalizeOrder(rawOrder);
       },
 
       async create(payload) {
@@ -300,15 +539,13 @@ const WashlyAPI = (() => {
           return { success: true, order: newOrder, isDemo: true };
         }
 
-        // Future PHP Endpoint: POST /backend/api/orders/create.php
-        const res = await fetch(`${BACKEND_BASE_URL}/orders/create.php`, {
+        // PHP Endpoint: POST /backend/api/orders/create.php
+        const resData = await apiRequest('/orders/create.php', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.message || 'Gagal membuat pesanan');
-        return { success: true, order: data.order, isDemo: false };
+        const rawOrder = (resData && resData.order) ? resData.order : resData;
+        return { success: true, order: normalizeOrder({ ...payload, ...(rawOrder || {}) }), isDemo: false };
       },
 
       async updateWeightAndStatus(orderId, updatePayload) {
@@ -363,15 +600,18 @@ const WashlyAPI = (() => {
           return { success: true, order, isDemo: true };
         }
 
-        // Future PHP Endpoint: POST /backend/api/orders/update-status.php
-        const res = await fetch(`${BACKEND_BASE_URL}/orders/update-status.php`, {
+        // PHP Endpoint: POST /backend/api/orders/update-status.php
+        const resData = await apiRequest('/orders/update-status.php', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ orderId, ...updatePayload })
         });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.message || 'Gagal memperbarui status pesanan');
-        return { success: true, order: data.order, isDemo: false };
+        const rawOrder = (resData && resData.order) ? resData.order : {
+          id: orderId,
+          status: updatePayload.newStatus,
+          actualWeight: updatePayload.actualWeight,
+          ...(resData || {})
+        };
+        return { success: true, order: normalizeOrder(rawOrder), isDemo: false };
       },
 
       async getMetrics() {
@@ -397,10 +637,10 @@ const WashlyAPI = (() => {
           };
         }
 
-        // Future PHP Endpoint: GET /backend/api/orders/metrics.php
-        const res = await fetch(`${BACKEND_BASE_URL}/orders/metrics.php`);
-        if (!res.ok) throw new Error('Gagal memuat metrik');
-        return await res.json();
+        // PHP Endpoint: GET /backend/api/orders/metrics.php
+        const resData = await apiRequest('/orders/metrics.php');
+        const rawMetrics = (resData && resData.metrics) ? resData.metrics : resData;
+        return normalizeMetrics(rawMetrics);
       },
 
       // Reset mock data to original factory seed

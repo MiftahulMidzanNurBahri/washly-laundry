@@ -11,9 +11,18 @@ const WASHLY_CONFIG = {
 
   STORAGE_KEYS: {
     CURRENT_USER: 'washly_current_user',
+    AUTH_TOKEN: 'washly_auth_token',
     ORDERS: 'washly_orders_store',
     DEMO_MODE: 'washly_demo_mode_enabled',
     NOTIFICATION: 'washly_pending_toast'
+  },
+
+  // Pengaturan koneksi Backend PHP & MySQL:
+  // Ubah DEFAULT_DEMO_MODE menjadi false saat folder backend/api/*.php sudah siap di XAMPP/Laragon.
+  // Biarkan API_BASE_URL bernilai null agar path otomatis menyesuaikan lokasi folder proyek.
+  BACKEND: {
+    DEFAULT_DEMO_MODE: true,
+    API_BASE_URL: null
   },
 
   // Strict business flow status definitions
