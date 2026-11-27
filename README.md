@@ -1,4 +1,4 @@
-# Washly — Laundry Management System (Frontend)
+# Washly - Laundry Management System (Frontend)
 
 Sistem manajemen dan layanan laundry modern dengan antarmuka pelanggan intuitif, pelacakan status pesanan real-time, dan konsol administrasi penimbangan akurat.
 
