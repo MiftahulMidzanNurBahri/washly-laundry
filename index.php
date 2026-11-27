@@ -2,6 +2,7 @@
 $pageTitle = 'Washly Layanan Laundry Modern, Cepat & Terpercaya';
 $pageDescription = 'Sistem manajemen dan layanan laundry modern dengan pelacakan status pesanan real-time, penimbangan presisi, dan parfum mewah tahan lama.';
 $basePrefix = '';
+$extraCss = 'customer.css';
 $inlineStyles = <<<'CSS'
     /* Hero section styles */
     .landing-hero {
@@ -143,7 +144,7 @@ require_once __DIR__ . '/includes/head.php';
 ?>
 
   <!-- Navigation Bar -->
-  <header class="app-header" style="position: sticky; top: 0; background: var(--color-surface); box-shadow: var(--shadow-xs);">
+  <header class="app-header">
     <div class="container header-container">
       <a href="index.php" class="brand-logo" id="header-brand-logo">
         <span>Washly</span>

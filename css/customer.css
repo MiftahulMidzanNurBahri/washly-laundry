@@ -11,7 +11,7 @@
   -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid rgba(57, 52, 94, 0.08);
   position: sticky;
-  top: 37px; /* Below demo banner */
+  top: 0;
   z-index: 990;
   transition: top var(--transition-fast);
 }
