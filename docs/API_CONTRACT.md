@@ -92,6 +92,46 @@ Seluruh request dan response wajib menggunakan:
   }
   ```
 
+#### C. Logout Pengguna / Admin
+- **Endpoint:** `POST /auth/logout.php`
+- **Catatan:** Menghapus `$_SESSION` PHP di sisi server (jika memakai PHP Native Session).
+- **Response Sukses (200 OK):**
+  ```json
+  {
+    "success": true,
+    "message": "Berhasil keluar dari sesi"
+  }
+  ```
+
+#### D. Perbarui Profil Pelanggan
+- **Endpoint:** `POST /users/update-profile.php`
+- **Request Body:**
+  ```json
+  {
+    "id": "usr-001",
+    "name": "Budi Santoso",
+    "phone": "0812-3456-7890",
+    "address": "Jl. Kemang Raya No. 14, Jakarta Selatan"
+  }
+  ```
+- **Response Sukses (200 OK):**
+  ```json
+  {
+    "success": true,
+    "message": "Profil berhasil diperbarui",
+    "data": {
+      "user": {
+        "id": "usr-001",
+        "name": "Budi Santoso",
+        "email": "budi@example.com",
+        "phone": "0812-3456-7890",
+        "address": "Jl. Kemang Raya No. 14, Jakarta Selatan",
+        "role": "customer"
+      }
+    }
+  }
+  ```
+
 ---
 
 ### 2.2 Katalog Layanan & Parfum

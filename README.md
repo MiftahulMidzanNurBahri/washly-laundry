@@ -7,9 +7,9 @@ Sistem manajemen dan layanan laundry modern dengan antarmuka pelanggan intuitif,
 ## 1. IKHTISAR PROYEK & BATASAN TEKNOLOGI
 
 Aplikasi ini dibangun khusus memenuhi batasan ketat tanpa framework:
-- **Teknologi yang Digunakan:** HTML5, CSS3, Vanilla JavaScript (ES6+), Inline SVG.
+- **Teknologi yang Digunakan:** PHP (Modular View & Session Templates), HTML5, CSS3, Vanilla JavaScript (ES6+), Inline SVG.
 - **Teknologi Terlarang:** Tanpa React, Vue, Angular, Svelte, Bootstrap, Tailwind CSS, jQuery, Vite, Webpack, atau npm dependencies.
-- **Arah Desain:** *Lavender White & Midnight Lavender* (#FAF9FD, #39345E, #7569A8, #FFFFFF).
+- **Arah Desain:** *Lavender White & Midnight Lavender* (#FAF9FD, #39345E, #7569A8, #FFFFFF) lengkap dengan *Dark Mode*.
 - **Bahasa Antarmuka:** Bahasa Indonesia secara menyeluruh.
 - **Kesiapan Backend:** Dilengkapi adapter API sentral (`js/api.js`) yang siap terhubung dengan backend PHP & database MySQL tim backend.
 
@@ -19,21 +19,29 @@ Aplikasi ini dibangun khusus memenuhi batasan ketat tanpa framework:
 
 ```
 washly-laundry/
-├── index.html                  # Landing page publik & pelacakan instan
-├── login.html                  # Halaman masuk (Role switcher & 1-click demo filler)
-├── register.html               # Halaman registrasi akun pelanggan
+├── index.php                   # Landing page publik & pelacakan instan
+├── login.php                   # Halaman masuk (Role switcher & 1-click demo filler)
+├── register.php                # Halaman registrasi akun pelanggan
+│
+├── includes/                   # Komponen Modular PHP (Server-Side Partials)
+│   ├── bootstrap.php           # Inisialisasi session PHP, XSS escaping & helper tema
+│   ├── head.php                # Head HTML dinamis & pencegah flash Dark Mode
+│   ├── customer-header.php     # Navbar portal pelanggan
+│   ├── admin-sidebar.php       # Sidebar navigasi admin
+│   ├── admin-topbar.php        # Topbar konsol admin
+│   └── scripts.php             # Pemuat bundel script JS modular
 │
 ├── customer/                   # Area Pelanggan
-│   ├── dashboard.html          # Dasbor pelanggan, statistik pesanan & pelacakan cepat
-│   ├── order.html              # Form pemesanan laundry & kalkulator live
-│   ├── order-detail.html       # Stepper pelacakan 4-tahap, rincian berat & biaya
-│   ├── history.html            # Riwayat transaksi lengkap dengan filter status & pencarian
-│   └── profile.html            # Pengaturan profil pelanggan
+│   ├── dashboard.php           # Dasbor pelanggan, statistik pesanan & pelacakan cepat
+│   ├── order.php               # Form pemesanan laundry & kalkulator live
+│   ├── order-detail.php        # Stepper pelacakan 4-tahap, rincian berat & biaya
+│   ├── history.php             # Riwayat transaksi lengkap dengan filter status & pencarian
+│   └── profile.php             # Pengaturan profil pelanggan
 │
 ├── admin/                      # Area Administrasi Outlet
-│   ├── dashboard.html          # Dasbor operasional, metrik pendapatan & antrean penimbangan
-│   ├── orders.html             # Manajemen pesanan masuk dengan multi-filter
-│   └── order-detail.html       # Antarmuka penimbangan pakaian riil & transisi status SOP
+│   ├── dashboard.php           # Dasbor operasional, metrik pendapatan & antrean penimbangan
+│   ├── orders.php              # Manajemen pesanan masuk dengan multi-filter
+│   └── order-detail.php        # Antarmuka penimbangan pakaian riil & transisi status SOP
 │
 ├── css/                        # Lapisan Style Modular
 │   ├── reset.css               # Modern CSS reset
@@ -64,25 +72,20 @@ washly-laundry/
 
 ## 3. CARA MENJALANKAN (SETUP & RUN)
 
-Karena aplikasi menggunakan teknologi web murni tanpa build step:
+Karena seluruh halaman antarmuka menggunakan **PHP + HTML5 + CSS3 + JS**, jalankan melalui server PHP lokal:
 
-### Opsi A: Menggunakan Live Server atau Simple HTTP Server (Direkomendasikan)
-Gunakan salah satu perintah berikut di terminal pada folder proyek:
+### Opsi A: Menggunakan XAMPP / Laragon (Direkomendasikan)
+1. Salin atau arahkan folder `washly-laundry` ke dalam `C:\xampp\htdocs\washly-laundry` (atau `C:\laragon\www\washly-laundry`).
+2. Nyalakan modul **Apache** (dan **MySQL** jika backend database sudah diaktifkan).
+3. Buka browser dan akses: `http://localhost/washly-laundry/`
+
+### Opsi B: Menggunakan PHP Built-in Server via Terminal
+Jalankan perintah berikut di terminal pada folder proyek:
 
 ```bash
-# Python 3
-python -m http.server 8000
-
-# Node.js (npx http-server)
-npx http-server -p 8000
-
-# PHP Built-in Server
 php -S localhost:8000
 ```
 Buka browser dan akses: `http://localhost:8000`
-
-### Opsi B: Buka Langsung File HTML
-Buka file `index.html` langsung dengan klik dua kali di file explorer Anda pada peramban Google Chrome, Edge, atau Firefox.
 
 ---
 

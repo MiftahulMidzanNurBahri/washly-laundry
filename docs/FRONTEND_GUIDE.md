@@ -6,11 +6,12 @@
 ## 1. IKHTISAR TEKNOLOGI
 
 Frontend Washly dibangun sesuai batasan non-negotiable spesifikasi:
+- **PHP Murni (Modular Templates):** Halaman dirender dengan komponen modular di folder `includes/` (`require_once`, session helper, XSS escaping `htmlspecialchars()`).
 - **HTML5:** Struktur semantik (`<header>`, `<main>`, `<section>`, `<aside>`, `<nav>`).
-- **CSS3 Murni:** CSS Custom Properties (Design Tokens), Flexbox, CSS Grid, media queries responsif.
+- **CSS3 Murni:** CSS Custom Properties (Design Tokens), Flexbox, CSS Grid, media queries responsif, serta *Dark Mode*.
 - **Vanilla JavaScript (ES6+):** Zero dependency, modular, terpisah antara adaptor data, validasi, dan rendering.
 - **Inline SVG:** Seluruh icon antarmuka menggunakan vector inline murni tanpa icon font pihak ketiga.
-- **Tanpa Framework:** Bebas dari React, Vue, Bootstrap, Tailwind, jQuery, dan build-tools (Vite/Webpack). Dapat dijalankan secara instan di browser atau server web statis.
+- **Tanpa Framework:** Bebas dari React, Vue, Bootstrap, Tailwind, jQuery, dan build-tools (Vite/Webpack). Dapat dijalankan langsung di XAMPP, Laragon, atau `php -S localhost:8000`.
 
 ---
 
@@ -18,21 +19,29 @@ Frontend Washly dibangun sesuai batasan non-negotiable spesifikasi:
 
 ```
 washly-laundry/
-├── index.html                  # Landing page publik & pelacakan cepat
-├── login.html                  # Halaman masuk (Pelanggan / Admin)
-├── register.html               # Halaman pendaftaran akun pelanggan
+├── index.php                   # Landing page publik & pelacakan cepat
+├── login.php                   # Halaman masuk (Pelanggan / Admin)
+├── register.php                # Halaman pendaftaran akun pelanggan
+│
+├── includes/                   # Partials & helper PHP bersama
+│   ├── bootstrap.php           # Session PHP, XSS escaping & theme toggle helper
+│   ├── head.php                # <head> dinamis & pencegah flash Dark Mode
+│   ├── customer-header.php     # Header navigasi area pelanggan
+│   ├── admin-sidebar.php       # Sidebar navigasi area admin
+│   ├── admin-topbar.php        # Topbar area admin
+│   └── scripts.php             # Pemuat script JS modular
 │
 ├── customer/                   # Area khusus peran Pelanggan
-│   ├── dashboard.html          # Ringkasan pesanan aktif & metrik
-│   ├── order.html              # Form pemesanan laundry & kalkulator live
-│   ├── order-detail.html       # Stepper pelacakan 4-tahap & rincian biaya
-│   ├── history.html            # Tabel riwayat pesanan dengan filter status
-│   └── profile.html            # Pengaturan profil pelanggan
+│   ├── dashboard.php           # Ringkasan pesanan aktif & metrik
+│   ├── order.php               # Form pemesanan laundry & kalkulator live
+│   ├── order-detail.php        # Stepper pelacakan 4-tahap & rincian biaya
+│   ├── history.php             # Tabel riwayat pesanan dengan filter status
+│   └── profile.php             # Pengaturan profil pelanggan
 │
 ├── admin/                      # Area khusus peran Admin Outlet
-│   ├── dashboard.html          # Metrik operasional & antrean penimbangan
-│   ├── orders.html             # Daftar seluruh pesanan & pencarian
-│   └── order-detail.html       # Antarmuka penimbangan riil & transisi status SOP
+│   ├── dashboard.php           # Metrik operasional & antrean penimbangan
+│   ├── orders.php              # Daftar seluruh pesanan & pencarian
+│   └── order-detail.php        # Antarmuka penimbangan riil & transisi status SOP
 │
 ├── css/                        # Lapisan styling modular
 │   ├── reset.css               # Normalisasi browser modern
@@ -112,4 +121,4 @@ Alur status cucian mengikuti urutan ketat berikut:
 ## 5. CARA MENGUBAH / MENAMBAH FITUR
 
 - **Menambah Layanan Laundry:** Buka `js/config.js` pada array `WASHLY_CONFIG.SERVICES`. Layanan baru akan otomatis muncul di landing page dan form pemesanan pelanggan.
-- **Mengaktifkan Backend PHP:** Di `js/api.js`, ubah `isDemoMode()` menjadi `false` atau panggil `WashlyAPI.setDemoMode(false)`. Frontend akan langsung melakukan `fetch()` ke endpoint PHP sesuai spesifikasi di `docs/API_CONTRACT.md`.
+- **Mengaktifkan Backend PHP & MySQL:** Buka `js/config.js` lalu ubah `WASHLY_CONFIG.BACKEND.DEFAULT_DEMO_MODE` menjadi `false` (atau panggil `WashlyAPI.setDemoMode(false)`). Path endpoint `./backend/api` / `../backend/api` akan terdeteksi otomatis di XAMPP/Laragon tanpa perlu merombak file `.html`, lengkap dengan dukungan cookie `$_SESSION` PHP (`credentials: 'include'`), Bearer token, serta pemetaan kolom `camelCase` maupun `snake_case` sesuai spesifikasi di `docs/API_CONTRACT.md`.
