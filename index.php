@@ -1,28 +1,8 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Washly Layanan Laundry Modern, Cepat & Terpercaya</title>
-  <script>
-    (function() {
-      try {
-        const theme = localStorage.getItem('washly_theme');
-        if (theme === 'dark') {
-          document.documentElement.setAttribute('data-theme', 'dark');
-        } else {
-          document.documentElement.setAttribute('data-theme', 'light');
-        }
-      } catch (e) {}
-    })();
-  </script>
-  <meta name="description" content="Sistem manajemen dan layanan laundry modern dengan pelacakan status pesanan real-time, penimbangan presisi, dan parfum mewah tahan lama.">
-  
-  <link rel="stylesheet" href="css/reset.css">
-  <link rel="stylesheet" href="css/global.css">
-  <link rel="stylesheet" href="css/components.css">
-  <link rel="stylesheet" href="css/responsive.css">
-  <style>
+<?php
+$pageTitle = 'Washly Layanan Laundry Modern, Cepat & Terpercaya';
+$pageDescription = 'Sistem manajemen dan layanan laundry modern dengan pelacakan status pesanan real-time, penimbangan presisi, dan parfum mewah tahan lama.';
+$basePrefix = '';
+$inlineStyles = <<<'CSS'
     /* Hero section styles */
     .landing-hero {
       background: linear-gradient(135deg, var(--color-primary-navy) 0%, var(--color-navy-dark) 60%, var(--color-navy-light) 100%);
@@ -139,14 +119,33 @@
         grid-template-columns: 1fr;
       }
     }
-  </style>
-</head>
-<body>
+CSS;
+
+$featuredServices = [
+    [
+        'title' => 'Cuci Komplit Reguler',
+        'meta'  => 'Rp 8.000 / kg • 2 Hari',
+        'desc'  => 'Pencucian higienis mendalam, pengeringan mesin anti-bau apek, dan setrika uap presisi licin sempurna.',
+    ],
+    [
+        'title' => 'Express Wash Kilat',
+        'meta'  => 'Rp 14.000 / kg • 6 Jam',
+        'desc'  => 'Layanan prioritas cepat selesai dalam hitungan jam untuk kebutuhan mendesak tanpa kompromi kualitas.',
+    ],
+    [
+        'title' => 'Setrika Uap Saja',
+        'meta'  => 'Rp 5.000 / kg • 1 Hari',
+        'desc'  => 'Penyetrikaan uap bertekanan tinggi untuk merapikan pakaian kantor, gaun, dan kemeja tanpa merusak serat.',
+    ],
+];
+
+require_once __DIR__ . '/includes/head.php';
+?>
 
   <!-- Navigation Bar -->
   <header class="app-header" style="position: sticky; top: 0; background: var(--color-surface); box-shadow: var(--shadow-xs);">
     <div class="container header-container">
-      <a href="index.html" class="brand-logo" id="header-brand-logo">
+      <a href="index.php" class="brand-logo" id="header-brand-logo">
         <span>Washly</span>
       </a>
 
@@ -158,16 +157,9 @@
       </nav>
 
       <div class="flex items-center gap-sm">
-        <button type="button" class="theme-toggle-btn" id="theme-toggle" aria-label="Beralih ke mode gelap" title="Beralih Mode Gelap / Terang">
-          <span class="theme-toggle-icon icon-sun" aria-hidden="true">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-          </span>
-          <span class="theme-toggle-icon icon-moon" aria-hidden="true">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-          </span>
-        </button>
-        <a href="login.html" class="btn btn-secondary btn-sm" id="btn-nav-login">Masuk</a>
-        <a href="register.html" class="btn btn-primary btn-sm" id="btn-nav-register">Daftar Akun</a>
+        <?= washly_theme_toggle_button() . "\n" ?>
+        <a href="login.php" class="btn btn-secondary btn-sm" id="btn-nav-login">Masuk</a>
+        <a href="register.php" class="btn btn-primary btn-sm" id="btn-nav-register">Daftar Akun</a>
         <button type="button" class="mobile-nav-toggle" aria-label="Toggle navigasi">Menu</button>
       </div>
     </div>
@@ -189,10 +181,10 @@
             Rasakan kenyamanan laundry modern dengan parfum eksklusif tahan lama, penimbangan akurat di outlet, serta pemantauan status pesanan real-time tanpa rasa cemas pakaian tertukar.
           </p>
           <div class="flex items-center gap-md flex-wrap">
-            <a href="customer/order.html" class="btn btn-primary btn-lg" id="btn-hero-order">
+            <a href="customer/order.php" class="btn btn-primary btn-lg" id="btn-hero-order">
               Buat Pesanan Laundry
             </a>
-            <a href="login.html" class="btn btn-secondary btn-lg" style="background: rgba(255,255,255,0.1); color:#FFFFFF; border-color: rgba(255,255,255,0.25);">
+            <a href="login.php" class="btn btn-secondary btn-lg" style="background: rgba(255,255,255,0.1); color:#FFFFFF; border-color: rgba(255,255,255,0.25);">
               Buka Portal Pelanggan
             </a>
           </div>
@@ -226,7 +218,7 @@
             </form>
 
             <div class="mt-md pt-sm text-xs text-muted" style="border-top: 1px solid var(--color-border);">
-              Coba kode demo: <a href="customer/order-detail.html?id=WSH-202610-001" style="color:var(--color-electric-blue); font-weight:600;">WSH-202610-001</a> atau <a href="customer/order-detail.html?id=WSH-202610-003" style="color:var(--color-electric-blue); font-weight:600;">WSH-202610-003</a>
+              Coba kode demo: <a href="customer/order-detail.php?id=WSH-202610-001" style="color:var(--color-electric-blue); font-weight:600;">WSH-202610-001</a> atau <a href="customer/order-detail.php?id=WSH-202610-003" style="color:var(--color-electric-blue); font-weight:600;">WSH-202610-003</a>
             </div>
           </div>
         </div>
@@ -246,27 +238,14 @@
       </div>
 
       <div class="grid grid-cols-3 gap-lg" id="landing-services-grid">
-        <!-- Rendered via config -->
+        <?php foreach ($featuredServices as $svc): ?>
         <div class="feature-card">
-          <h3>Cuci Komplit Reguler</h3>
-          <div class="text-sm font-bold mt-xs mb-xs" style="color:var(--color-electric-blue);">Rp 8.000 / kg • 2 Hari</div>
-          <p class="text-sm text-secondary mb-md">Pencucian higienis mendalam, pengeringan mesin anti-bau apek, dan setrika uap presisi licin sempurna.</p>
-          <a href="customer/order.html" class="btn btn-outline-primary btn-sm">Pilih Layanan</a>
+          <h3><?= washly_e($svc['title']) ?></h3>
+          <div class="text-sm font-bold mt-xs mb-xs" style="color:var(--color-electric-blue);"><?= washly_e($svc['meta']) ?></div>
+          <p class="text-sm text-secondary mb-md"><?= washly_e($svc['desc']) ?></p>
+          <a href="customer/order.php" class="btn btn-outline-primary btn-sm">Pilih Layanan</a>
         </div>
-
-        <div class="feature-card">
-          <h3>Express Wash Kilat</h3>
-          <div class="text-sm font-bold mt-xs mb-xs" style="color:var(--color-electric-blue);">Rp 14.000 / kg • 6 Jam</div>
-          <p class="text-sm text-secondary mb-md">Layanan prioritas cepat selesai dalam hitungan jam untuk kebutuhan mendesak tanpa kompromi kualitas.</p>
-          <a href="customer/order.html" class="btn btn-outline-primary btn-sm">Pilih Layanan</a>
-        </div>
-
-        <div class="feature-card">
-          <h3>Setrika Uap Saja</h3>
-          <div class="text-sm font-bold mt-xs mb-xs" style="color:var(--color-electric-blue);">Rp 5.000 / kg • 1 Hari</div>
-          <p class="text-sm text-secondary mb-md">Penyetrikaan uap bertekanan tinggi untuk merapikan pakaian kantor, gaun, dan kemeja tanpa merusak serat.</p>
-          <a href="customer/order.html" class="btn btn-outline-primary btn-sm">Pilih Layanan</a>
-        </div>
+        <?php endforeach; ?>
       </div>
     </div>
   </section>
@@ -365,8 +344,8 @@
               </div>
             </div>
             <div class="flex gap-sm mt-md">
-              <a href="login.html" class="btn btn-primary btn-sm" style="flex:1;">Masuk ke Sistem</a>
-              <a href="customer/dashboard.html" class="btn btn-secondary btn-sm" style="flex:1;">Dashboard Langsung</a>
+              <a href="login.php" class="btn btn-primary btn-sm" style="flex:1;">Masuk ke Sistem</a>
+              <a href="customer/dashboard.php" class="btn btn-secondary btn-sm" style="flex:1;">Dashboard Langsung</a>
             </div>
           </div>
         </div>
@@ -379,7 +358,7 @@
     <div class="container">
       <div class="grid grid-cols-4 gap-xl mb-xl">
         <div>
-          <a href="index.html" class="brand-logo" style="color:#F3EFFB; margin-bottom: var(--space-sm);">
+          <a href="index.php" class="brand-logo" style="color:#F3EFFB; margin-bottom: var(--space-sm);">
             <span>Washly</span>
           </a>
           <p class="text-xs text-muted mt-xs">
@@ -390,19 +369,19 @@
         <div>
           <strong style="color:#F3EFFB; display:block; margin-bottom:var(--space-sm);">Halaman</strong>
           <ul class="flex flex-col gap-xs text-xs">
-            <li><a href="index.html" style="color:#C6C0D6;">Beranda</a></li>
-            <li><a href="customer/order.html" style="color:#C6C0D6;">Buat Pesanan</a></li>
-            <li><a href="customer/history.html" style="color:#C6C0D6;">Riwayat Laundry</a></li>
-            <li><a href="login.html" style="color:#C6C0D6;">Masuk Akun</a></li>
+            <li><a href="index.php" style="color:#C6C0D6;">Beranda</a></li>
+            <li><a href="customer/order.php" style="color:#C6C0D6;">Buat Pesanan</a></li>
+            <li><a href="customer/history.php" style="color:#C6C0D6;">Riwayat Laundry</a></li>
+            <li><a href="login.php" style="color:#C6C0D6;">Masuk Akun</a></li>
           </ul>
         </div>
 
         <div>
           <strong style="color:#F3EFFB; display:block; margin-bottom:var(--space-sm);">Akses Peran</strong>
           <ul class="flex flex-col gap-xs text-xs">
-            <li><a href="customer/dashboard.html" style="color:#C6C0D6;">Dashboard Pelanggan</a></li>
-            <li><a href="admin/dashboard.html" style="color:#C6C0D6;">Dashboard Admin</a></li>
-            <li><a href="admin/orders.html" style="color:#C6C0D6;">Antrean Pesanan Admin</a></li>
+            <li><a href="customer/dashboard.php" style="color:#C6C0D6;">Dashboard Pelanggan</a></li>
+            <li><a href="admin/dashboard.php" style="color:#C6C0D6;">Dashboard Admin</a></li>
+            <li><a href="admin/orders.php" style="color:#C6C0D6;">Antrean Pesanan Admin</a></li>
           </ul>
         </div>
 
@@ -417,29 +396,22 @@
       </div>
 
       <div class="pt-md flex items-center justify-between flex-wrap gap-sm text-xs" style="border-top: 1px solid rgba(255,255,255,0.08);">
-        <div>&copy; 2026 Washly Laundry Management System. Hak Cipta Dilindungi.</div>
-        <div>Desain: Soft Luxury — Navy & Electric Blue</div>
+        <div>&copy; <?= date('Y') ?> Washly Laundry Management System. Hak Cipta Dilindungi.</div>
+        <div>Desain: Lavender White &amp; Midnight Lavender</div>
       </div>
     </div>
   </footer>
 
-  <!-- Scripts -->
-  <script src="js/config.js"></script>
-  <script src="js/mock-data.js"></script>
-  <script src="js/validators.js"></script>
-  <script src="js/api.js"></script>
-  <script src="js/app.js"></script>
-  <script src="js/navigation.js"></script>
-
-  <script>
+<?php
+$inlineScript = <<<'JS'
     // Quick tracking form on landing page
     document.getElementById('landing-tracking-form')?.addEventListener('submit', (e) => {
       e.preventDefault();
       const code = document.getElementById('tracking-code-input').value.trim().toUpperCase();
       if (code) {
-        window.location.href = `customer/order-detail.html?id=${encodeURIComponent(code)}`;
+        window.location.href = `customer/order-detail.php?id=${encodeURIComponent(code)}`;
       }
     });
-  </script>
-</body>
-</html>
+JS;
+require_once __DIR__ . '/includes/scripts.php';
+?>
