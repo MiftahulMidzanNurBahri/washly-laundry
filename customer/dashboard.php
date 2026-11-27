@@ -1,64 +1,18 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard Pelanggan — Washly</title>
-  <script>
-    (function() {
-      try {
-        var theme = localStorage.getItem('washly_theme');
-        if (theme === 'dark') {
-          document.documentElement.setAttribute('data-theme', 'dark');
-        } else {
-          document.documentElement.setAttribute('data-theme', 'light');
-        }
-      } catch (e) {}
-    })();
-  </script>
-  <meta name="description" content="Pantau pesanan laundry berjalan, estimasi selesai, dan riwayat pesanan Anda di Washly.">
+<?php
+$pageTitle = 'Dashboard Pelanggan — Washly';
+$pageDescription = 'Pantau pesanan laundry berjalan, estimasi selesai, dan riwayat pesanan Anda di Washly.';
+$basePrefix = '../';
+$extraCss = 'customer.css';
+$pageScript = 'customer.js';
+$activeNav = 'dashboard';
 
-  <link rel="stylesheet" href="../css/reset.css">
-  <link rel="stylesheet" href="../css/global.css">
-  <link rel="stylesheet" href="../css/components.css">
-  <link rel="stylesheet" href="../css/customer.css">
-  <link rel="stylesheet" href="../css/responsive.css">
-</head>
-<body>
-
-  <!-- Navigation Header -->
-  <header class="app-header">
-    <div class="container header-container">
-      <a href="../index.html" class="brand-logo">
-        <span>Washly</span>
-      </a>
-
-      <nav class="nav-menu" id="customer-nav">
-        <a href="dashboard.html" class="nav-link active">Dashboard</a>
-        <a href="order.html" class="nav-link">Buat Pesanan Baru</a>
-        <a href="history.html" class="nav-link">Riwayat Pesanan</a>
-        <a href="profile.html" class="nav-link">Profil Saya</a>
-      </nav>
-
-      <div class="flex items-center gap-md">
-        <div class="user-profile-widget">
-          <div class="user-avatar" id="header-user-avatar">BS</div>
-          <div class="user-info">
-            <span class="user-name" id="user-greeting-name">Budi Santoso</span>
-            <span class="user-role-label">Pelanggan</span>
-          </div>
-        </div>
-        <button type="button" class="btn btn-secondary btn-sm btn-logout" title="Keluar">
-          Keluar
-        </button>
-        <button type="button" class="mobile-nav-toggle" aria-label="Toggle menu">Menu</button>
-      </div>
-    </div>
-  </header>
+require_once __DIR__ . '/../includes/head.php';
+require_once __DIR__ . '/../includes/customer-header.php';
+?>
 
   <!-- Main Content Container -->
   <main class="container" style="padding-top: var(--space-xl); padding-bottom: var(--space-3xl);">
-    
+
     <!-- Welcome Hero Banner -->
     <section class="welcome-hero">
       <div class="welcome-text">
@@ -66,7 +20,7 @@
         <p>Pantau proses cucian Anda secara transparan dari serah terima pakaian hingga siap diambil di outlet.</p>
       </div>
       <div>
-        <a href="order.html" class="btn btn-primary btn-lg" style="box-shadow: 0 4px 14px rgba(0,0,0,0.25);">
+        <a href="order.php" class="btn btn-primary btn-lg" style="box-shadow: 0 4px 14px rgba(0,0,0,0.25);">
           + Buat Pesanan Baru
         </a>
       </div>
@@ -102,7 +56,7 @@
       <div style="grid-column: span 2;">
         <div class="flex items-center justify-between mb-sm">
           <h4>Status Pesanan Berjalan</h4>
-          <a href="history.html" class="text-xs text-link font-semibold">Semua Pesanan →</a>
+          <a href="history.php" class="text-xs text-link font-semibold">Semua Pesanan →</a>
         </div>
         <div id="ongoing-order-spotlight">
           <!-- Populated by js/customer.js -->
@@ -123,12 +77,12 @@
           <form id="tracking-quick-form">
             <div class="form-group mb-sm">
               <label for="tracking-input-code" class="form-label text-xs">Nomor Kode Pesanan</label>
-              <input 
-                type="text" 
-                id="tracking-input-code" 
-                class="form-control" 
-                placeholder="Contoh: WSH-202610-001" 
-                required 
+              <input
+                type="text"
+                id="tracking-input-code"
+                class="form-control"
+                placeholder="Contoh: WSH-202610-001"
+                required
                 style="text-transform: uppercase; font-weight:700;"
               >
             </div>
@@ -144,7 +98,7 @@
     <section>
       <div class="flex items-center justify-between mb-sm">
         <h4>Riwayat Pesanan Terbaru</h4>
-        <a href="history.html" class="text-xs text-link font-semibold">Lihat Selengkapnya →</a>
+        <a href="history.php" class="text-xs text-link font-semibold">Lihat Selengkapnya →</a>
       </div>
 
       <div class="table-container">
@@ -169,13 +123,4 @@
 
   </main>
 
-  <!-- Scripts -->
-  <script src="../js/config.js"></script>
-  <script src="../js/mock-data.js"></script>
-  <script src="../js/validators.js"></script>
-  <script src="../js/api.js"></script>
-  <script src="../js/app.js"></script>
-  <script src="../js/navigation.js"></script>
-  <script src="../js/customer.js"></script>
-</body>
-</html>
+<?php require_once __DIR__ . '/../includes/scripts.php'; ?>

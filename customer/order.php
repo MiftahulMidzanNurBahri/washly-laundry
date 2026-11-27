@@ -1,64 +1,20 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Buat Pesanan Laundry Baru — Washly</title>
-  <script>
-    (function() {
-      try {
-        var theme = localStorage.getItem('washly_theme');
-        if (theme === 'dark') {
-          document.documentElement.setAttribute('data-theme', 'dark');
-        } else {
-          document.documentElement.setAttribute('data-theme', 'light');
-        }
-      } catch (e) {}
-    })();
-  </script>
-  <meta name="description" content="Pilih paket layanan laundry terbaik, aroma parfum eksklusif, dan kirim instruksi pencucian Anda di Washly.">
+<?php
+$pageTitle = 'Buat Pesanan Laundry Baru — Washly';
+$pageDescription = 'Pilih paket layanan laundry terbaik, aroma parfum eksklusif, dan kirim instruksi pencucian Anda di Washly.';
+$basePrefix = '../';
+$extraCss = 'customer.css';
+$pageScript = 'customer.js';
+$activeNav = 'order';
 
-  <link rel="stylesheet" href="../css/reset.css">
-  <link rel="stylesheet" href="../css/global.css">
-  <link rel="stylesheet" href="../css/components.css">
-  <link rel="stylesheet" href="../css/customer.css">
-  <link rel="stylesheet" href="../css/responsive.css">
-</head>
-<body>
-
-  <!-- Navigation Header -->
-  <header class="app-header">
-    <div class="container header-container">
-      <a href="../index.html" class="brand-logo">
-        <span>Washly</span>
-      </a>
-
-      <nav class="nav-menu">
-        <a href="dashboard.html" class="nav-link">Dashboard</a>
-        <a href="order.html" class="nav-link active">Buat Pesanan Baru</a>
-        <a href="history.html" class="nav-link">Riwayat Pesanan</a>
-        <a href="profile.html" class="nav-link">Profil Saya</a>
-      </nav>
-
-      <div class="flex items-center gap-md">
-        <div class="user-profile-widget">
-          <div class="user-avatar">BS</div>
-          <div class="user-info">
-            <span class="user-name">Budi Santoso</span>
-            <span class="user-role-label">Pelanggan</span>
-          </div>
-        </div>
-        <button type="button" class="btn btn-secondary btn-sm btn-logout" title="Keluar">Keluar</button>
-        <button type="button" class="mobile-nav-toggle" aria-label="Toggle menu">Menu</button>
-      </div>
-    </div>
-  </header>
+require_once __DIR__ . '/../includes/head.php';
+require_once __DIR__ . '/../includes/customer-header.php';
+?>
 
   <!-- Main Container -->
   <main class="container" style="padding-top: var(--space-xl); padding-bottom: var(--space-3xl);">
-    
+
     <div class="mb-xl">
-      <a href="dashboard.html" class="text-xs text-link font-semibold mb-xs" style="display:inline-block;">← Kembali ke Dashboard</a>
+      <a href="dashboard.php" class="text-xs text-link font-semibold mb-xs" style="display:inline-block;">← Kembali ke Dashboard</a>
       <h2>Buat Pesanan Laundry Baru</h2>
       <p class="text-secondary text-sm">
         Pilih paket layanan yang Anda butuhkan, aroma wewangian favorit, dan rincian instruksi pakaian.
@@ -67,10 +23,10 @@
 
     <form id="order-create-form" novalidate>
       <div class="order-layout">
-        
+
         <!-- Left Column: Form Configuration -->
         <div>
-          
+
           <!-- Step 1: Select Service -->
           <div class="card mb-lg">
             <div class="card-header">
@@ -90,12 +46,12 @@
           <div class="card mb-lg">
             <div class="card-header">
               <div>
-                <h3 class="card-title">2. Estimasi Berat & Pilihan Aroma</h3>
+                <h3 class="card-title">2. Estimasi Berat &amp; Pilihan Aroma</h3>
                 <p class="card-subtitle">Perkiraan berat pakaian dan wewangian yang digunakan</p>
               </div>
             </div>
             <div class="card-body">
-              
+
               <!-- Weight Stepper Input -->
               <div class="form-group mb-lg">
                 <label for="order-weight-estimate" class="form-label">
@@ -103,14 +59,14 @@
                 </label>
                 <div class="flex items-center gap-sm">
                   <button type="button" class="btn btn-secondary" id="btn-weight-minus" style="font-weight:700; width:44px;">−</button>
-                  <input 
-                    type="number" 
-                    id="order-weight-estimate" 
-                    class="form-control text-center" 
-                    value="3.0" 
-                    step="0.5" 
-                    min="1" 
-                    max="100" 
+                  <input
+                    type="number"
+                    id="order-weight-estimate"
+                    class="form-control text-center"
+                    value="3.0"
+                    step="0.5"
+                    min="1"
+                    max="100"
                     style="width: 120px; font-weight:700; font-size:var(--font-size-lg);"
                   >
                   <button type="button" class="btn btn-secondary" id="btn-weight-plus" style="font-weight:700; width:44px;">+</button>
@@ -136,12 +92,12 @@
           <div class="card mb-lg">
             <div class="card-header">
               <div>
-                <h3 class="card-title">3. Detail Penyerahan & Catatan</h3>
+                <h3 class="card-title">3. Detail Penyerahan &amp; Catatan</h3>
                 <p class="card-subtitle">Instruksi khusus penanganan pakaian Anda</p>
               </div>
             </div>
             <div class="card-body">
-              
+
               <div class="grid grid-cols-2 gap-sm mb-md">
                 <div class="form-group">
                   <label for="order-customer-name" class="form-label">Nama Pemesan</label>
@@ -171,10 +127,10 @@
                 <label for="order-notes" class="form-label">
                   Catatan Khusus / Permintaan Khusus
                 </label>
-                <textarea 
-                  id="order-notes" 
-                  class="form-textarea" 
-                  rows="3" 
+                <textarea
+                  id="order-notes"
+                  class="form-textarea"
+                  rows="3"
                   placeholder="Contoh: Baju putih kemeja kerja tolong dipisah, bahan sutra jangan disikat keras, dll."
                 ></textarea>
                 <div class="form-hint">Admin kami akan membaca catatan ini sebelum memproses cucian.</div>
@@ -192,7 +148,7 @@
               <h3 class="card-title">Ringkasan Pesanan</h3>
             </div>
             <div class="card-body">
-              
+
               <div class="summary-row">
                 <span>Layanan Dipilih:</span>
                 <strong id="summary-service-name">-</strong>
@@ -234,7 +190,7 @@
               </div>
 
               <button type="submit" id="btn-submit-order" class="btn btn-primary btn-lg mt-lg" style="width: 100%;">
-                Konfirmasi & Buat Pesanan
+                Konfirmasi &amp; Buat Pesanan
               </button>
 
             </div>
@@ -246,13 +202,4 @@
 
   </main>
 
-  <!-- Scripts -->
-  <script src="../js/config.js"></script>
-  <script src="../js/mock-data.js"></script>
-  <script src="../js/validators.js"></script>
-  <script src="../js/api.js"></script>
-  <script src="../js/app.js"></script>
-  <script src="../js/navigation.js"></script>
-  <script src="../js/customer.js"></script>
-</body>
-</html>
+<?php require_once __DIR__ . '/../includes/scripts.php'; ?>
